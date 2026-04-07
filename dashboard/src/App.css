@@ -1,0 +1,17 @@
+/* App-level wrapper overrides — global resets live in index.css */
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* Mobile sign-in menu link accent */
+.mobile-signin-link {
+  color: var(--accent-bright) !important;
+  font-weight: 600;
+}
