@@ -7,6 +7,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from '../firebase'
 import SentinelLogo from '../components/SentinelLogo'
 import './SignIn.css'
@@ -18,6 +19,8 @@ export default function SignIn() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetMsg, setResetMsg] = useState('')
   const navigate = useNavigate()
 
   // Redirect if already signed in
@@ -29,6 +32,29 @@ export default function SignIn() {
   }, [navigate])
 
   const clearError = () => setError('')
+
+  const clearResetMsg = () => setResetMsg('')
+
+  const handleForgotPassword = async () => {
+    if (resetLoading || loading) return
+    clearError()
+    clearResetMsg()
+
+    const entered = window.prompt('Enter your email to receive a password reset link:', email)
+    const targetEmail = (entered || '').trim()
+
+    if (!targetEmail) return
+
+    setResetLoading(true)
+    try {
+      await sendPasswordResetEmail(auth, targetEmail)
+      setResetMsg('Password reset link sent. Please check your email.')
+    } catch (err) {
+      setError(friendlyError(err.code))
+    } finally {
+      setResetLoading(false)
+    }
+  }
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
@@ -124,7 +150,7 @@ export default function SignIn() {
               id="email"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={e => { setEmail(e.target.value); clearResetMsg() }}
               placeholder="you@company.com"
               required
               autoComplete="email"
@@ -135,8 +161,14 @@ export default function SignIn() {
             <label htmlFor="password">
               Password
               {mode === 'signin' && (
-                <button type="button" className="forgot-link" tabIndex={-1}>
-                  Forgot password?
+                <button
+                  type="button"
+                  className="forgot-link"
+                  tabIndex={-1}
+                  onClick={handleForgotPassword}
+                  disabled={loading || resetLoading}
+                >
+                  {resetLoading ? 'Sending…' : 'Forgot password?'}
                 </button>
               )}
             </label>
@@ -144,7 +176,7 @@ export default function SignIn() {
               id="password"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={e => { setPassword(e.target.value); clearResetMsg() }}
               placeholder={mode === 'signup' ? 'Minimum 6 characters' : '••••••••'}
               required
               minLength={6}
@@ -177,6 +209,19 @@ export default function SignIn() {
             </div>
           )}
 
+          {resetMsg && (
+            <div className="signin-error" role="status" style={{
+              background: 'rgba(16,185,129,0.1)',
+              borderColor: 'rgba(16,185,129,0.25)',
+              color: '#6ee7b7',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              {resetMsg}
+            </div>
+          )}
+
           <button
             type="submit"
             className="btn-primary w-full signin-submit"
@@ -203,7 +248,7 @@ export default function SignIn() {
 
         <p className="signin-terms">
           By continuing, you agree to our{' '}
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+          <Link to="/docs">Terms of Service</Link> and <Link to="/docs">Privacy Policy</Link>.
         </p>
       </div>
     </div>

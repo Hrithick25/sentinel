@@ -267,6 +267,8 @@
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 50%, var(--bg) 100%);
 }
 
+
+
 .threats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -745,6 +747,8 @@
   .hero-proof { flex-direction: column; width: 100%; }
   .proof-divider { height: 1px; width: 100%; }
   .proof-stat { padding: 8px 0; align-items: center; text-align: center; }
+
+
 }
 
 @media (max-width: 480px) {

@@ -195,16 +195,16 @@ function Footer() {
         <div className="footer-col">
           <h4>Company</h4>
           <a href="mailto:hello@sentinel.ai">Contact</a>
-          <a href="#">Privacy Policy</a>
+          <NavLink to="/docs">Privacy Policy</NavLink>
         </div>
       </div>
 
       <div className="footer-bottom">
         <p>© 2026 Sentinel AI. All rights reserved.</p>
         <div className="footer-bottom-links">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Security</a>
+          <NavLink to="/docs">Privacy</NavLink>
+          <NavLink to="/docs">Terms</NavLink>
+          <NavLink to="/docs">Security</NavLink>
         </div>
       </div>
     </footer>

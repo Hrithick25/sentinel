@@ -181,13 +181,13 @@
 }
 
 /* ── Section header block ────────────────────── */
-.section-header {
+.docs-section-header {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 4px;
 }
-.section-header-icon {
+.docs-section-header-icon {
   width: 44px;
   height: 44px;
   border-radius: 10px;
@@ -200,7 +200,7 @@
   flex-shrink: 0;
   margin-top: 2px;
 }
-.section-header h1 { margin-bottom: 6px; }
+.docs-section-header h1 { margin-bottom: 6px; }
 
 /* ── Code Block ───────────────────────────────── */
 .code-block {
@@ -597,5 +597,5 @@
   .docs-page { padding-top: 56px; }
   .docs-body h1 { font-size: 1.35rem; }
   .doc-alert { font-size: 0.8rem; padding: 12px; }
-  .section-header { flex-direction: column; gap: 10px; }
+  .docs-section-header { flex-direction: column; gap: 10px; }
 }
