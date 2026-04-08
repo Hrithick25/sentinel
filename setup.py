@@ -14,9 +14,9 @@ if readme.exists():
     long_description = readme.read_text(encoding="utf-8")
 
 setup(
-    name="sentinel-ai-sdk",
-    version="3.0.1",
-    description="SENTINEL — Drop-in LLM Trust & Safety SDK. 15-agent parallel mesh.",
+    name="sentinel-guardrails-sdk",
+    version="4.0.0",
+    description="SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="SENTINEL Labs",

@@ -17,8 +17,6 @@ import logging
 import re
 from typing import Optional
 
-import numpy as np
-
 from sentinel.agents.base import SentinelAgent
 from sentinel.models import AgentResult, SentinelRequest
 

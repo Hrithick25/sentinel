@@ -33,7 +33,7 @@ async def init_kafka_producer():
         await _producer.start()
         logger.info("Kafka producer started: %s", settings.kafka_bootstrap_servers)
     except ImportError:
-        logger.warning("aiokafka not installed — pip install sentinel-ai-sdk[kafka]")
+        logger.warning("aiokafka not installed — pip install sentinel-guardrails-sdk[kafka]")
     except Exception as e:
         logger.error("Failed to start Kafka producer: %s", e)
 

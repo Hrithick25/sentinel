@@ -118,7 +118,7 @@ const STEPS = [
     icon: <Terminal size={22} />,
     title: 'Install in 30 seconds',
     desc: 'Run one pip command. No heavy setup, no servers to manage. Sentinel runs as a lightweight SDK in your existing project.',
-    code: 'pip install sentinel-ai',
+    code: 'pip install sentinel-guardrails-sdk',
   },
   {
     step: '02',

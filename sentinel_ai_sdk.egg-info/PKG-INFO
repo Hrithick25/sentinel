@@ -1,9 +1,80 @@
+Metadata-Version: 2.1
+Name: sentinel-ai-sdk
+Version: 4.0.0
+Summary: SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh: prompt injection, PII, jailbreak pattern detection, DAN attacks, cost anomaly detection, agentic loop breaking, hallucination, and compliance routing.
+Author: SENTINEL Labs
+License: MIT
+Project-URL: Homepage, https://github.com/sentinel-ai/sentinel-sdk
+Project-URL: Documentation, https://docs.sentinel-ai.dev
+Project-URL: Repository, https://github.com/sentinel-ai/sentinel-sdk
+Project-URL: Issues, https://github.com/sentinel-ai/sentinel-sdk/issues
+Project-URL: Changelog, https://github.com/sentinel-ai/sentinel-sdk/blob/main/CHANGELOG.md
+Keywords: llm,safety,trust,prompt-injection,pii,toxicity,jailbreak,hallucination,guardrails,ai-safety,security,enterprise,compliance,gdpr,hipaa,dpdp,agentic,dan-attack,jailbreak-detection,cost-anomaly,loop-detection,locale-compliance
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Security
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Typing :: Typed
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: pydantic>=2.7.0
+Provides-Extra: langchain
+Requires-Dist: langchain-core>=0.1.0; extra == "langchain"
+Provides-Extra: llamaindex
+Requires-Dist: llama-index-core>=0.10.0; extra == "llamaindex"
+Provides-Extra: server
+Requires-Dist: fastapi>=0.111.0; extra == "server"
+Requires-Dist: uvicorn[standard]>=0.29.0; extra == "server"
+Requires-Dist: pydantic-settings>=2.2.0; extra == "server"
+Requires-Dist: python-dotenv>=1.0.1; extra == "server"
+Requires-Dist: sqlalchemy>=2.0.30; extra == "server"
+Requires-Dist: asyncpg>=0.29.0; extra == "server"
+Requires-Dist: alembic>=1.13.1; extra == "server"
+Requires-Dist: redis>=5.0.4; extra == "server"
+Requires-Dist: python-jose[cryptography]>=3.3.0; extra == "server"
+Requires-Dist: passlib[bcrypt]>=1.7.4; extra == "server"
+Requires-Dist: python-multipart>=0.0.9; extra == "server"
+Requires-Dist: orjson>=3.10.3; extra == "server"
+Requires-Dist: websockets>=12.0; extra == "server"
+Requires-Dist: prometheus-client>=0.20.0; extra == "server"
+Provides-Extra: supabase
+Requires-Dist: supabase>=2.4.0; extra == "supabase"
+Requires-Dist: pydantic-settings>=2.2.0; extra == "supabase"
+Requires-Dist: python-dotenv>=1.0.1; extra == "supabase"
+Provides-Extra: ml
+Requires-Dist: sentence-transformers>=2.7.0; extra == "ml"
+Requires-Dist: faiss-cpu>=1.8.0; extra == "ml"
+Requires-Dist: spacy>=3.7.4; extra == "ml"
+Requires-Dist: transformers>=4.40.0; extra == "ml"
+Requires-Dist: torch>=2.2.0; extra == "ml"
+Requires-Dist: detoxify>=0.5.2; extra == "ml"
+Requires-Dist: numpy>=1.26.4; extra == "ml"
+Provides-Extra: kafka
+Requires-Dist: aiokafka>=0.10.0; extra == "kafka"
+Provides-Extra: full
+Requires-Dist: sentinel-ai-sdk[kafka,langchain,llamaindex,ml,server]; extra == "full"
+Requires-Dist: stripe>=9.5.0; extra == "full"
+Provides-Extra: dev
+Requires-Dist: pytest>=8.2.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.6; extra == "dev"
+Requires-Dist: httpx>=0.27.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+Requires-Dist: mypy>=1.10.0; extra == "dev"
+
 # SENTINEL — LLM Trust & Safety Infrastructure Layer
 
 > Production-grade security middleware for enterprise AI deployments.
 > Drop-in SDK · 19-agent parallel mesh · <72ms P99 · HIPAA/GDPR/SOC2/DPDP
 
-[![PyPI version](https://img.shields.io/pypi/v/sentinel-guardrails-sdk.svg)](https://pypi.org/project/sentinel-guardrails-sdk/)
+[![PyPI version](https://img.shields.io/pypi/v/sentinel-ai-sdk.svg)](https://pypi.org/project/sentinel-ai-sdk/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -88,13 +159,13 @@ SDK (wrap) → FastAPI Gateway → 19-Agent Parallel Mesh → Risk Aggregator �
 
 ```bash
 # SDK only (lightweight, for client-side integration)
-pip install sentinel-guardrails-sdk
+pip install sentinel-ai-sdk
 
 # Full gateway server with ML agents
-pip install sentinel-guardrails-sdk[full]
+pip install sentinel-ai-sdk[full]
 
 # Server without ML (uses heuristic fallbacks)
-pip install sentinel-guardrails-sdk[server]
+pip install sentinel-ai-sdk[server]
 ```
 
 ## Free vs Pro Tiers

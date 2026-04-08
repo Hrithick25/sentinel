@@ -40,7 +40,8 @@ from sentinel.agents.compliance_tagger import ComplianceTagger
 
 # ── v2 agents ──────────────────────────────────────────────────────────────────
 from sentinel.agents.response_safety import ResponseSafetyLayer
-from sentinel.agents.locale_compliance_router import LocaleComplianceRouter, MultilingualGuard  # MultilingualGuard = alias
+from sentinel.agents.multilingual_guard import MultilingualGuard
+from sentinel.agents.locale_compliance_router import LocaleComplianceRouter
 from sentinel.agents.tool_call_safety import ToolCallSafety
 from sentinel.agents.brand_guard import BrandGuard
 from sentinel.agents.token_anomaly import TokenAnomalyDetector
@@ -69,7 +70,8 @@ def build_agent_mesh(faiss_manager=None) -> list[SentinelAgent]:
         ComplianceTagger(),
         # ── v2 upgrade agents ─────────────────────────────────────────────────
         ResponseSafetyLayer(),
-        LocaleComplianceRouter(),      # formerly MultilingualGuard
+        MultilingualGuard(),
+        LocaleComplianceRouter(),
         ToolCallSafety(),
         BrandGuard(),
         TokenAnomalyDetector(),

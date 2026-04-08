@@ -753,6 +753,6 @@
   .hero-cta { flex-direction: column; }
   .hero-cta .btn-primary, .hero-cta .btn-secondary { width: 100%; justify-content: center; }
   .features-grid { grid-template-columns: 1fr; }
-  .compliance-grid { grid-template-columns: 1fr 1fr; }
+  .compliance-grid { grid-template-columns: 1fr; }
   .hero-scroll-hint { display: none; }
 }

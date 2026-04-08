@@ -47,7 +47,7 @@ def get_supabase_client():
     except ImportError:
         raise ImportError(
             "Supabase is not installed. Install with: "
-            "pip install sentinel-ai-sdk[supabase]"
+            "pip install sentinel-guardrails-sdk[supabase]"
         )
 
 

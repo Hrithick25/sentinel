@@ -21,6 +21,9 @@ const NAV = [
     items: [
       { id: 'openai',         label: 'OpenAI Client Wrap' },
       { id: 'anthropic',      label: 'Anthropic / Claude' },
+      { id: 'nodejs',         label: 'Node.js / TypeScript' },
+      { id: 'java',           label: 'Java' },
+      { id: 'react',          label: 'React Frontend' },
       { id: 'error-handling', label: 'Error Handling' },
     ],
   },
@@ -59,7 +62,10 @@ const TOC_MAP = {
   'docker': ['Production Requirements', 'Quick Start', 'System Validation'],
   'sandbox': ['Sandbox Mode', 'Testing'],
   'error-handling': ['SentinelBlockedError', 'SentinelProRequiredError', 'Catching Errors'],
-  'changelog': ['v3.1.0 — Current', 'v3.0.1', 'v0.1.0'],
+  'nodejs': ['Install', 'Screen API', 'Trust Score API', 'Full Chat Proxy', 'Error Handling'],
+  'java': ['Dependencies', 'Screen API', 'Trust Score API', 'Full Chat Proxy'],
+  'react': ['Setup', 'Hook Pattern', 'Inline Guard Component', 'Dashboard Embed'],
+  'changelog': ['v4.0.0 — Current', 'v3.0.1', 'v0.1.0'],
 }
 
 /* ── Copy button ──────────────────────────────────── */
@@ -117,7 +123,7 @@ const CONTENT = {
 
       <h2>1. Install the SDK</h2>
       <p>Install the lightweight Sentinel client. It has zero heavy ML or CUDA dependencies.</p>
-      <CodeBlock lang="bash" code={`pip install sentinel-ai-sdk`} />
+      <CodeBlock lang="bash" code={`pip install sentinel-guardrails-sdk`} />
 
       <Alert type="success">
         <strong>Tip:</strong> The SDK is under 500 KB. All 19-agent inference runs on Sentinel's edge cluster — not your machine.
@@ -210,23 +216,23 @@ print(response.choices[0].message.content)`} />
         {[
           ['Injection Scout',          'Prompt Input',   'Vector-similarity + regex rules'],
           ['PII Sentinel',             'Input & Output', 'Named-entity recognition (NER)'],
-          ['Jailbreak Firewall',       'Prompt Input',   'FAISS nearest-neighbour search'],
-          ['Jailbreak Pattern Detector','Prompt Input',   'DAN / roleplay / bypass pattern matching'],
-          ['Toxicity Screener',        'Input & Output', 'Fine-tuned classifier'],
-          ['Hallucination Probe',      'LLM Output',     'NLI entailment vs. RAG context'],
-          ['Context Drift Sensor',     'Session History','Semantic embedding drift score'],
-          ['Compliance Tagger',        'Input & Output', 'Rule-based + NER mapping'],
+          ['Jailbreak Firewall',       'Prompt Input',   'Sliding-window multi-turn analysis'],
+          ['Toxicity Screener',        'Input & Output', 'Fine-tuned Detoxify classifier'],
+          ['Hallucination Probe',      'LLM Output',     'DeBERTa NLI entailment vs. RAG context'],
+          ['Context Anchor',           'Session History','Cosine embedding drift score'],
+          ['Compliance Tagger',        'Input & Output', 'Rule-based HIPAA/GDPR/DPDP mapping'],
           ['Response Safety Layer',    'LLM Output',     'Post-generation policy sweep'],
-          ['Locale Compliance Router', 'Input',          'Language-aware regulatory routing'],
+          ['Multilingual Guard',       'Input',          'Cross-language jailbreak detection'],
           ['Tool-Call Safety',         'Function Calls', 'Schema validation + permission check'],
           ['Brand & Tone Guardian',    'Output',         'Keyword + embedding similarity'],
           ['Token Anomaly Detector',   'Input',          'Statistical token distribution'],
-          ['Prompt Lineage Tracker',   'Full Turn',      'Cryptographic event chaining'],
-          ['Intent Classifier',        'Input',          'Multi-label intent classification'],
-          ['Adversarial Rephrasing',   'Input',          'T5-based canonical normalisation'],
+          ['Prompt Lineage Tracker',   'Full Turn',      'Redis session memory graph'],
+          ['Intent Classifier',        'Input',          'DeBERTa zero-shot classification'],
+          ['Adversarial Rephrasing',   'Input',          'Heuristic perturbation testing'],
+          ['Jailbreak Pattern Detector','Prompt Input',   'DAN / roleplay / bypass pattern matching'],
+          ['Locale Compliance Router', 'Input',          'Language-aware regulatory routing'],
           ['Cost Anomaly Detector',    'Token Usage',    'Runaway token spend detection'],
           ['Agentic Loop Breaker',     'Tool Calls',     'Infinite tool-call loop detection'],
-          ['Response Safety',          'LLM Output',     'Post-generation output scan'],
         ].map(([agent, scope, method]) => (
           <div className="at-row" key={agent}>
             <span className="at-agent">{agent}</span>
@@ -256,14 +262,30 @@ sntnl-test-xxxxxxxxxxxxxxxxxxxxxxxx   # Sandbox / staging key`} />
         Never commit it to version control.
       </Alert>
 
-      <h2>Setting the Key via Environment Variable</h2>
+      <h2>Universal Compatibility</h2>
+      <p>
+        The API Key (Tenant ID) that you copy from the <strong>Dashboard's "Key" button</strong> is universally applicable across all tech stacks: Python, Node.js, Java, and React. 
+        It isolates your application's logs and routes your traffic to your tenant automatically.
+      </p>
+
+      <h2>Setting the Key via Environment Variables</h2>
+      <p>Always load your copied API Key securely from the environment.</p>
+      
+      <h3>Python</h3>
       <CodeBlock lang="python" code={`import os
 import sentinel
 
 safe_client = sentinel.wrap(
     your_llm_client,
-    api_key=os.environ["SENTINEL_API_KEY"],  # recommended
+    api_key=os.environ.get("SENTINEL_API_KEY")
 )`} />
+
+      <h3>Node.js / React</h3>
+      <CodeBlock lang="javascript" code={`// Server (Node.js) or bundler (Vite / Next.js)
+const API_KEY = process.env.SENTINEL_API_KEY || import.meta.env.VITE_SENTINEL_API_KEY;`} />
+
+      <h3>Java</h3>
+      <CodeBlock lang="java" code={`String apiKey = System.getenv("SENTINEL_API_KEY");`} />
 
       <h2>Key Scopes</h2>
       <div className="scope-table">
@@ -353,12 +375,14 @@ except SentinelProRequiredError as e:
     <>
       <h1>Changelog / Versions</h1>
       <p className="doc-lead">Keep track of updates to the Sentinel SDK and Gateway.</p>
-      <h2>v3.1.0 — Current</h2>
+      <h2>v4.0.0 — Current</h2>
       <ul>
         <li>19-agent mesh with 4 new v4 agents (Jailbreak Pattern Detector, Cost Anomaly, Agentic Loop Breaker, Locale Router)</li>
+        <li>RiskAggregator consensus engine (upgraded from BayesianConsensus)</li>
         <li>Pro / Free tier system — free users get core protection, Pro unlocks analytics + compliance exports</li>
         <li><code>SentinelBlockedError</code> and <code>SentinelProRequiredError</code> custom exceptions</li>
         <li>Dashboard accessible to all signed-in users (free = demo data, Pro = live gateway)</li>
+        <li>Node.js, Java, and React integration guides</li>
         <li>Compliance export API (JSON / CSV / PDF)</li>
       </ul>
       <h2>v3.0.1</h2>
@@ -394,6 +418,330 @@ from anthropic import Anthropic
 client = Anthropic(api_key="...")
 safe_client = sentinel.wrap(client)
 res = safe_client.messages.create(model="claude-3-opus", messages=[...])`} />
+    </>
+  ),
+
+  nodejs: (
+    <>
+      <h1>Node.js / TypeScript Integration</h1>
+      <p className="doc-lead">
+        Sentinel exposes a standard REST gateway — integrate from any Node.js or TypeScript backend
+        using <code>fetch</code>, <code>axios</code>, or any HTTP client.
+      </p>
+
+      <h2>Install</h2>
+      <p>No npm package required. Call the Sentinel gateway directly via HTTP.</p>
+      <CodeBlock lang="bash" code={`# Optional: use a typed helper (community package)
+npm install axios`} />
+
+      <h2>Screen API</h2>
+      <p>Check a prompt for threats before sending it to your LLM:</p>
+      <CodeBlock lang="javascript" code={`const SENTINEL_URL = process.env.SENTINEL_GATEWAY_URL || 'https://gateway.sentinel-ai.dev';
+const SENTINEL_KEY = process.env.SENTINEL_API_KEY;
+
+async function screenPrompt(userMessage) {
+  const res = await fetch(\`\${SENTINEL_URL}/v1/screen\`, {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${SENTINEL_KEY}\`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messages: [{ role: 'user', content: userMessage }],
+      tenant_id: 'your-org',
+    }),
+  });
+
+  if (!res.ok) throw new Error(\`Sentinel error: \${res.status}\`);
+  return res.json();
+  // → { decision: "ALLOW", score: 0.12, agents: [...] }
+}`} />
+
+      <h2>Trust Score API</h2>
+      <CodeBlock lang="javascript" code={`async function getTrustScore(messages) {
+  const res = await fetch(\`\${SENTINEL_URL}/v1/trust-score\`, {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${SENTINEL_KEY}\`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ messages, tenant_id: 'your-org' }),
+  });
+  const data = await res.json();
+  return data.trust_score; // 0–100
+}`} />
+
+      <h2>Full Chat Proxy</h2>
+      <p>Route your OpenAI calls through Sentinel for full input + output scanning:</p>
+      <CodeBlock lang="javascript" code={`async function safeChatCompletion(messages, model = 'gpt-4o') {
+  const res = await fetch(\`\${SENTINEL_URL}/v1/chat\`, {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${SENTINEL_KEY}\`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      tenant_id: 'your-org',
+    }),
+  });
+
+  if (res.status === 403) {
+    const err = await res.json();
+    throw new Error(\`Blocked by Sentinel: \${err.detail}\`);
+  }
+  return res.json();
+}`} />
+
+      <h2>Error Handling</h2>
+      <CodeBlock lang="javascript" code={`try {
+  const result = await safeChatCompletion([{ role: 'user', content: userInput }]);
+  console.log(result.choices[0].message.content);
+} catch (err) {
+  if (err.message.includes('Blocked by Sentinel')) {
+    // Show safe fallback to user
+    res.status(400).json({ error: 'This request was flagged for safety.' });
+  }
+}`} />
+
+      <Alert type="info">
+        <strong>Tip:</strong> For Express.js / Next.js API routes, create a shared <code>sentinelClient.js</code> utility
+        that wraps these calls. All Sentinel endpoints accept standard JSON over HTTPS.
+      </Alert>
+    </>
+  ),
+
+  java: (
+    <>
+      <h1>Java Integration</h1>
+      <p className="doc-lead">
+        Integrate Sentinel into any Java 11+ application using the built-in <code>java.net.http</code> client.
+        No external SDK required — just call the REST API.
+      </p>
+
+      <h2>Dependencies</h2>
+      <p>No additional dependencies needed for Java 11+. For JSON parsing, add Gson or Jackson:</p>
+      <CodeBlock lang="xml" code={`<!-- Maven: add Gson for JSON parsing -->
+<dependency>
+  <groupId>com.google.code.gson</groupId>
+  <artifactId>gson</artifactId>
+  <version>2.10.1</version>
+</dependency>`} />
+
+      <h2>Screen API</h2>
+      <CodeBlock lang="java" code={`import java.net.URI;
+import java.net.http.*;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+import com.google.gson.Gson;
+import java.util.*;
+
+public class SentinelClient {
+    private static final String BASE_URL =
+        System.getenv("SENTINEL_GATEWAY_URL") != null
+            ? System.getenv("SENTINEL_GATEWAY_URL")
+            : "https://gateway.sentinel-ai.dev";
+    private static final String API_KEY = System.getenv("SENTINEL_API_KEY");
+    private static final HttpClient http = HttpClient.newHttpClient();
+    private static final Gson gson = new Gson();
+
+    public static Map<String, Object> screenPrompt(String userMessage) throws Exception {
+        var payload = Map.of(
+            "messages", List.of(Map.of("role", "user", "content", userMessage)),
+            "tenant_id", "your-org"
+        );
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(BASE_URL + "/v1/screen"))
+            .header("Authorization", "Bearer " + API_KEY)
+            .header("Content-Type", "application/json")
+            .POST(BodyPublishers.ofString(gson.toJson(payload)))
+            .build();
+
+        HttpResponse<String> response = http.send(request, BodyHandlers.ofString());
+
+        if (response.statusCode() == 403) {
+            throw new RuntimeException("Blocked by Sentinel: " + response.body());
+        }
+        return gson.fromJson(response.body(), Map.class);
+    }
+}`} />
+
+      <h2>Trust Score API</h2>
+      <CodeBlock lang="java" code={`public static double getTrustScore(String userMessage) throws Exception {
+    var payload = Map.of(
+        "messages", List.of(Map.of("role", "user", "content", userMessage)),
+        "tenant_id", "your-org"
+    );
+
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(BASE_URL + "/v1/trust-score"))
+        .header("Authorization", "Bearer " + API_KEY)
+        .header("Content-Type", "application/json")
+        .POST(BodyPublishers.ofString(new Gson().toJson(payload)))
+        .build();
+
+    HttpResponse<String> res = HttpClient.newHttpClient()
+        .send(request, BodyHandlers.ofString());
+    Map<String, Object> data = new Gson().fromJson(res.body(), Map.class);
+    return ((Number) data.get("trust_score")).doubleValue();
+}`} />
+
+      <h2>Full Chat Proxy</h2>
+      <CodeBlock lang="java" code={`// Route LLM calls through Sentinel for full input + output scanning
+public static Map<String, Object> safeChat(String model, List<Map<String, String>> messages)
+        throws Exception {
+    var payload = Map.of(
+        "model", model,
+        "messages", messages,
+        "tenant_id", "your-org"
+    );
+
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(BASE_URL + "/v1/chat"))
+        .header("Authorization", "Bearer " + API_KEY)
+        .header("Content-Type", "application/json")
+        .POST(BodyPublishers.ofString(new Gson().toJson(payload)))
+        .build();
+
+    HttpResponse<String> res = HttpClient.newHttpClient()
+        .send(request, BodyHandlers.ofString());
+
+    if (res.statusCode() == 403) {
+        throw new RuntimeException("Blocked by Sentinel: " + res.body());
+    }
+    return new Gson().fromJson(res.body(), Map.class);
+}`} />
+
+      <Alert type="info">
+        <strong>Spring Boot:</strong> Create a <code>@Service</code> bean wrapping these methods.
+        Inject via constructor for clean dependency management.
+      </Alert>
+    </>
+  ),
+
+  react: (
+    <>
+      <h1>React Frontend Integration</h1>
+      <p className="doc-lead">
+        Add real-time threat screening to your React chat UI.
+        Call Sentinel from your backend API route — never expose API keys in the browser.
+      </p>
+
+      <Alert type="warning">
+        <strong>Security:</strong> Never call the Sentinel gateway directly from the browser.
+        Always proxy through your own backend (Next.js API route, Express, etc.) to keep your API key secret.
+      </Alert>
+
+      <h2>Setup</h2>
+      <p>Create a backend API route that proxies to Sentinel. Example for Next.js:</p>
+      <CodeBlock lang="javascript" code={`// pages/api/sentinel/screen.js  (Next.js API Route)
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
+
+  const response = await fetch(
+    process.env.SENTINEL_GATEWAY_URL + '/v1/screen',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Bearer \${process.env.SENTINEL_API_KEY}\`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: req.body.messages,
+        tenant_id: 'your-org',
+      }),
+    }
+  );
+
+  const data = await response.json();
+  res.status(response.status).json(data);
+}`} />
+
+      <h2>Hook Pattern</h2>
+      <p>Create a reusable React hook for threat screening:</p>
+      <CodeBlock lang="jsx" code={`// hooks/useSentinel.js
+import { useState, useCallback } from 'react';
+
+export function useSentinel() {
+  const [screening, setScreening] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const screen = useCallback(async (message) => {
+    setScreening(true);
+    try {
+      const res = await fetch('/api/sentinel/screen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: message }],
+        }),
+      });
+      const data = await res.json();
+      setResult(data);
+      return data;
+    } finally {
+      setScreening(false);
+    }
+  }, []);
+
+  return { screen, screening, result };
+}`} />
+
+      <h2>Inline Guard Component</h2>
+      <p>Use the hook in your chat input component:</p>
+      <CodeBlock lang="jsx" code={`import { useSentinel } from '../hooks/useSentinel';
+
+function ChatInput({ onSend }) {
+  const [message, setMessage] = useState('');
+  const { screen, screening } = useSentinel();
+
+  const handleSubmit = async () => {
+    const result = await screen(message);
+    if (result.decision === 'BLOCKED') {
+      alert('This message was flagged for safety.');
+      return;
+    }
+    onSend(message);
+    setMessage('');
+  };
+
+  return (
+    <div className="chat-input">
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type a message..."
+        disabled={screening}
+      />
+      <button onClick={handleSubmit} disabled={screening}>
+        {screening ? 'Checking...' : 'Send'}
+      </button>
+    </div>
+  );
+}`} />
+
+      <h2>Dashboard Embed</h2>
+      <p>Display a live trust score badge in your admin panel:</p>
+      <CodeBlock lang="jsx" code={`function TrustBadge({ score }) {
+  const color =
+    score >= 80 ? '#10b981' :
+    score >= 50 ? '#f59e0b' : '#ef4444';
+
+  return (
+    <span style={{
+      background: color + '20',
+      color,
+      padding: '4px 12px',
+      borderRadius: '20px',
+      fontSize: '0.85rem',
+      fontWeight: 600,
+    }}>
+      Trust: {score}/100
+    </span>
+  );
+}`} />
     </>
   ),
   policies: (

@@ -5,10 +5,10 @@ Drop-in SDK for enterprise AI deployments.
 
 19-agent parallel mesh · <72ms P99 · HIPAA/GDPR/SOC2/DPDP
 
-pip install sentinel-ai-sdk          → SDK only (lightweight, ~4 deps)
-pip install sentinel-ai-sdk[server]  → Self-hosted gateway
-pip install sentinel-ai-sdk[ml]      → ML agent models
-pip install sentinel-ai-sdk[full]    → Everything
+pip install sentinel-guardrails-sdk          → SDK only (lightweight, ~4 deps)
+pip install sentinel-guardrails-sdk[server]  → Self-hosted gateway
+pip install sentinel-guardrails-sdk[ml]      → ML agent models
+pip install sentinel-guardrails-sdk[full]    → Everything
 
 Tiers:
     Free:  screen(), trust_score(), wrap()   — core AI protection
@@ -16,7 +16,7 @@ Tiers:
            + cloud-hosted dashboard + compliance exports
 """
 
-__version__ = "3.1.0"
+__version__ = "4.0.0"
 __author__ = "SENTINEL Labs"
 
 # SDK client — always available, zero heavy deps

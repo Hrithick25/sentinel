@@ -114,19 +114,20 @@ class MultilingualGuard(SentinelAgent):
         # ── 1. Detect scripts present ────────────────────────────────────────
         scripts = self._detect_scripts(text)
 
-        # If purely ASCII/Latin, this agent has minimal relevance
-        if not scripts or scripts == {"latin"}:
-            return AgentResult(
-                agent_name=self.agent_name, score=0.0, flagged=False,
-                metadata={"scripts_detected": list(scripts), "skipped": True,
-                          "reason": "no Indic script detected"},
-            )
-
         # ── 2. Code-switch detection ─────────────────────────────────────────
         is_code_switched = "latin" in scripts and len(scripts) > 1
 
         # ── 3. Pattern matching for known Indic attacks ──────────────────────
         pattern_hits = [p.pattern for p in _COMPILED_INDIC if p.search(text)]
+
+        # If purely ASCII/Latin and no Indic patterns hit, skip
+        if (not scripts or scripts == {"latin"}) and not pattern_hits:
+            return AgentResult(
+                agent_name=self.agent_name, score=0.0, flagged=False,
+                metadata={"scripts_detected": list(scripts), "skipped": True,
+                          "reason": "no Indic script or pattern detected"},
+            )
+
         pattern_score = self._clamp(len(pattern_hits) * 0.30)
 
         # ── 4. Cross-lingual semantic similarity ─────────────────────────────

@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 #  This file is ONLY for self-hosted deployments.
-#  If you're using `pip install sentinel-ai-sdk` as a lightweight SDK client,
+#  If you're using `pip install sentinel-guardrails-sdk` as a lightweight SDK client,
 #  you DO NOT need Docker at all.
 #
 #  For cloud-hosted backend (no Docker), use Supabase instead:

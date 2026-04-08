@@ -2,7 +2,7 @@
 #  SENTINEL — requirements.txt (for Docker self-hosted gateway ONLY)
 # ═══════════════════════════════════════════════════════════════════════════════
 #  If you're using the SDK client via pip, you only need:
-#    pip install sentinel-ai-sdk
+#    pip install sentinel-guardrails-sdk
 #  This file is used by the Dockerfile to install gateway dependencies.
 # ═══════════════════════════════════════════════════════════════════════════════
 

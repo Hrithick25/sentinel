@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sentinel-ai-sdk"
+name = "sentinel-guardrails-sdk"
 version = "4.0.0"
 description = "SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh: prompt injection, PII, jailbreak pattern detection, DAN attacks, cost anomaly detection, agentic loop breaking, hallucination, and compliance routing."
 readme = "README.md"
@@ -34,7 +34,7 @@ classifiers = [
 ]
 
 # ─── Core SDK: ULTRA-LIGHTWEIGHT ──────────────────────────────────────────────
-# `pip install sentinel-ai-sdk` pulls ONLY these 2 deps (~2MB total)
+# `pip install sentinel-guardrails-sdk` pulls ONLY these 2 deps (~2MB total)
 # No database, no ML models, no Redis, no Docker, no PyTorch.
 dependencies = [
     "httpx>=0.27.0",
@@ -47,7 +47,7 @@ langchain = ["langchain-core>=0.1.0"]
 llamaindex = ["llama-index-core>=0.10.0"]
 
 # ── Self-hosted Gateway server (Docker or bare-metal) ──────────────────────────
-# `pip install sentinel-ai-sdk[server]`
+# `pip install sentinel-guardrails-sdk[server]`
 # Requires Postgres + Redis (use docker-compose.dev.yml to spin them up)
 server = [
     "fastapi>=0.111.0",
@@ -67,7 +67,7 @@ server = [
 ]
 
 # ── Supabase backend (cloud-hosted alternative to Docker Postgres) ─────────────
-# `pip install sentinel-ai-sdk[supabase]`
+# `pip install sentinel-guardrails-sdk[supabase]`
 supabase = [
     "supabase>=2.4.0",
     "pydantic-settings>=2.2.0",
@@ -75,7 +75,7 @@ supabase = [
 ]
 
 # ── ML/NLP agents (models download on first use) ──────────────────────────────
-# `pip install sentinel-ai-sdk[ml]`
+# `pip install sentinel-guardrails-sdk[ml]`
 ml = [
     "sentence-transformers>=2.7.0",
     "faiss-cpu>=1.8.0",
@@ -91,7 +91,7 @@ kafka = ["aiokafka>=0.10.0"]
 
 # ── Everything (self-hosted with all features) ─────────────────────────────────
 full = [
-    "sentinel-ai-sdk[server,ml,kafka,langchain,llamaindex]",
+    "sentinel-guardrails-sdk[server,ml,kafka,langchain,llamaindex]",
     "stripe>=9.5.0",
 ]
 

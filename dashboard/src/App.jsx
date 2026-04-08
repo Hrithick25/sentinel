@@ -181,7 +181,7 @@ function Footer() {
           <h4>Product</h4>
           <NavLink to="/docs">How It Works</NavLink>
           <NavLink to="/pricing">Pricing</NavLink>
-          <a href="https://pypi.org/project/sentinel-ai-sdk/" target="_blank" rel="noopener noreferrer">Python SDK</a>
+          <a href="https://pypi.org/project/sentinel-guardrails-sdk/" target="_blank" rel="noopener noreferrer">Python SDK</a>
         </div>
 
         <div className="footer-col">
