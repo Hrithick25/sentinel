@@ -1,0 +1,133 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SENTINEL — Self-Hosted Docker Compose (PRODUCTION)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+#  This file is ONLY for self-hosted deployments.
+#  If you're using `pip install sentinel-ai-sdk` as a lightweight SDK client,
+#  you DO NOT need Docker at all.
+#
+#  For cloud-hosted backend (no Docker), use Supabase instead:
+#    DATABASE_BACKEND=supabase in your .env
+#
+#  Usage:
+#    docker compose up -d                    # Start all services
+#    docker compose up -d postgres redis     # Just infra (run gateway locally)
+#    docker compose down                     # Stop everything
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: sentinel_postgres
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel
+      POSTGRES_DB: sentinel_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: sentinel_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Kafka (Redpanda — single-node, lightweight) ────────────────────────────
+  kafka:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+    container_name: sentinel_kafka
+    profiles: ["full"]   # Only starts with: docker compose --profile full up
+    command:
+      - redpanda
+      - start
+      - --smp
+      - "1"
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - "0"
+      - --kafka-addr
+      - internal://0.0.0.0:29092,external://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - internal://kafka:29092,external://localhost:9092
+      - --set
+      - redpanda.enable_idempotence=true
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9644/v1/status/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ── SENTINEL Gateway ───────────────────────────────────────────────────────
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentinel_gateway
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_BACKEND: postgres
+      DATABASE_URL: postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel_db
+      REDIS_URL: redis://redis:6379
+      KAFKA_BOOTSTRAP_SERVERS: ""   # Empty = disabled. Use --profile full to enable
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ENVIRONMENT: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - faiss_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── React Dashboard ────────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: sentinel_dashboard
+    profiles: ["full"]   # Only starts with: docker compose --profile full up
+    ports:
+      - "3000:80"
+    environment:
+      VITE_GATEWAY_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:8000
+    depends_on:
+      - gateway
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:
+  faiss_data:

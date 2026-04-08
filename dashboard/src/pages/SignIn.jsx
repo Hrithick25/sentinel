@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
   auth,
@@ -6,6 +6,7 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
 } from '../firebase'
 import SentinelLogo from '../components/SentinelLogo'
 import './SignIn.css'
@@ -18,6 +19,14 @@ export default function SignIn() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  // Redirect if already signed in
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, u => {
+      if (u) navigate('/app')
+    })
+    return unsub
+  }, [navigate])
 
   const clearError = () => setError('')
 

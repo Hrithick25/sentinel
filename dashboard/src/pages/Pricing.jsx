@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CheckCircle2, XCircle, Zap, Building2, Code2, ArrowRight, HelpCircle, ChevronDown } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { auth, db, doc, setDoc, onAuthStateChanged } from '../firebase'
 import './Pricing.css'
 
 /* ── Plans ──────────────────────────────── */
@@ -33,7 +34,7 @@ const PLANS_MONTHLY = [
     price: '₹4,500',
     sub: '/month · billed monthly',
     color: '#6366f1',
-    cta: 'Start Free Trial',
+    cta: 'Upgrade to Pro',
     ctaHref: '/signin',
     ctaStyle: 'primary',
     popular: true,
@@ -116,6 +117,32 @@ const FAQ = [
 export default function Pricing() {
   const [cycle, setCycle]     = useState('monthly')
   const [faqOpen, setFaqOpen] = useState(null)
+  const [user, setUser]       = useState(null)
+  const [upgrading, setUpgrading] = useState(false)
+  const navigate              = useNavigate()
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, u => setUser(u))
+    return unsub
+  }, [])
+
+  const handleProUpgrade = async () => {
+    if (!user) {
+      navigate('/signin')
+      return
+    }
+    setUpgrading(true)
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        plan: 'pro',
+        updatedAt: new Date().toISOString()
+      }, { merge: true })
+      navigate('/app')
+    } catch (err) {
+      console.error(err)
+      setUpgrading(false)
+    }
+  }
 
   const plans = cycle === 'annual' ? PLANS_ANNUAL : PLANS_MONTHLY
 
@@ -148,6 +175,14 @@ export default function Pricing() {
               Annual
               <span className="toggle-save">Save 20%</span>
             </button>
+          </div>
+          {/* Alert */}
+          <div style={{
+            maxWidth: '600px', margin: '32px auto 0', padding: '14px',
+            background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)',
+            borderRadius: '12px', fontSize: '0.85rem', color: 'var(--text-muted)'
+          }}>
+            <strong>Testing Note:</strong> Clicking "Upgrade to Pro" will simulate a successful Stripe checkout and instantly upgrade your account to a Pro licence in Firestore, granting full access to the live dashboard.
           </div>
         </div>
       </div>
@@ -205,7 +240,11 @@ export default function Pricing() {
                 </ul>
 
                 <div className="plan-cta-wrap">
-                  {plan.ctaStyle === 'primary' ? (
+                  {plan.id === 'pro' ? (
+                    <button onClick={handleProUpgrade} disabled={upgrading} className="btn-primary w-full plan-cta-btn">
+                      {upgrading ? 'Upgrading...' : plan.cta} <ArrowRight size={15} />
+                    </button>
+                  ) : plan.ctaStyle === 'primary' ? (
                     <Link to={plan.ctaHref} className="btn-primary w-full plan-cta-btn">
                       {plan.cta} <ArrowRight size={15} />
                     </Link>

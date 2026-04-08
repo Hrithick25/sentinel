@@ -1,0 +1,148 @@
+
+<style>
+  .w { padding: 1.5rem 0; font-family: var(--font-sans); }
+  .name-row { display:flex; align-items:baseline; gap:12px; margin-bottom:4px; }
+  .pname { font-size:22px; font-weight:500; color:var(--color-text-primary); letter-spacing:-0.3px; }
+  .psub { font-size:13px; color:var(--color-text-secondary); }
+  .tagline { font-size:14px; color:var(--color-text-secondary); margin-bottom:1.5rem; }
+  .divider { border:none; border-top:0.5px solid var(--color-border-tertiary); margin:1rem 0; }
+  .slabel { font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-tertiary); margin:1rem 0 0.6rem; }
+  .bullet { display:flex; gap:10px; margin-bottom:13px; }
+  .dot { width:5px; height:5px; border-radius:50%; background:#534AB7; margin-top:8px; flex-shrink:0; }
+  .bullet p { font-size:14px; color:var(--color-text-primary); line-height:1.65; margin:0; }
+  .bullet em { color:#534AB7; font-style:normal; font-weight:500; }
+  .pill-row { display:flex; flex-wrap:wrap; gap:6px; }
+  .pill { font-size:12px; padding:4px 10px; border-radius:8px; background:#EEEDFE; color:#3C3489; border:0.5px solid #AFA9EC; }
+  .metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:0.75rem 0; }
+  .metric { background:var(--color-background-secondary); border-radius:8px; padding:10px 12px; }
+  .metric .val { font-size:20px; font-weight:500; color:var(--color-text-primary); }
+  .metric .lbl { font-size:11px; color:var(--color-text-secondary); margin-top:2px; }
+  .tier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0.75rem 0; }
+  .tier { border:0.5px solid var(--color-border-tertiary); border-radius:8px; padding:10px 12px; }
+  .tier .tname { font-size:12px; font-weight:500; color:#534AB7; margin-bottom:4px; }
+  .tier .tprice { font-size:18px; font-weight:500; color:var(--color-text-primary); }
+  .tier .tdesc { font-size:11px; color:var(--color-text-secondary); margin-top:3px; }
+  .arch-row { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin:0.75rem 0; }
+  .abox { background:var(--color-background-secondary); border-radius:6px; padding:8px; text-align:center; }
+  .abox .aname { font-size:11px; font-weight:500; color:var(--color-text-primary); }
+  .abox .arole { font-size:10px; color:var(--color-text-tertiary); margin-top:2px; }
+  .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; background:#E1F5EE; color:#0F6E56; border:0.5px solid #5DCAA5; margin-left:8px; vertical-align:middle; }
+  @media (prefers-color-scheme:dark) {
+    .pill { background:#26215C; color:#CECBF6; border-color:#3C3489; }
+    .dot { background:#7F77DD; }
+    .bullet em { color:#AFA9EC; }
+    .tier .tname { color:#AFA9EC; }
+    .badge { background:#085041; color:#9FE1CB; border-color:#1D9E75; }
+  }
+</style>
+
+<div class="w">
+  <div class="name-row">
+    <span class="pname">SENTINEL</span>
+    <span class="psub">Enterprise SDK</span>
+    <span class="badge">Revenue-ready</span>
+  </div>
+  <p class="tagline">Production-Grade LLM Trust & Safety Infrastructure — Drop-in SDK for Any AI Application</p>
+
+  <hr class="divider">
+
+  <div class="slabel">Architecture — 7-agent parallel mesh</div>
+  <div class="arch-row">
+    <div class="abox"><div class="aname">Injection Scout</div><div class="arole">FAISS + ANN</div></div>
+    <div class="abox"><div class="aname">PII Sentinel</div><div class="arole">SpaCy NER</div></div>
+    <div class="abox"><div class="aname">Context Anchor</div><div class="arole">RAG grounding</div></div>
+    <div class="abox"><div class="aname">Jailbreak Guard</div><div class="arole">sliding vector</div></div>
+    <div class="abox"><div class="aname">Hallucination Probe</div><div class="arole">claim entailment</div></div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:0.75rem;">
+    <div class="abox"><div class="aname">Toxicity Screener</div><div class="arole">HF Detoxify</div></div>
+    <div class="abox"><div class="aname">Compliance Tagger</div><div class="arole">HIPAA · GDPR · SOC2</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="slabel">What's new vs PHANTOM</div>
+
+  <div class="bullet">
+    <div class="dot"></div>
+    <p>Added a <em>Hallucination Probe agent</em> — uses NLI-based claim entailment (DeBERTa) to check whether every factual assertion in the LLM output is grounded in the retrieved context, returning a grounding score per claim. This is the #1 production blocker for enterprise RAG deployments and no open-source tool solves it end-to-end.</p>
+  </div>
+
+  <div class="bullet">
+    <div class="dot"></div>
+    <p>Built a <em>Compliance Tagger</em> that maps detected PII and sensitive content to specific regulatory obligations (HIPAA data categories, GDPR lawful bases, SOC2 controls) — and auto-generates a per-request compliance audit trail as a signed JSON attestation that can be exported for auditor review. Directly unlocks healthcare and fintech verticals.</p>
+  </div>
+
+  <div class="bullet">
+    <div class="dot"></div>
+    <p>Engineered a <em>multi-tenant policy engine</em> — organizations configure per-use-case safety profiles (stricter PII thresholds for HR bots, looser for code assistants) stored in Postgres, served at runtime via a TTL-cached policy resolver. Each tenant's config is version-controlled with rollback, enabling safe A/B testing of safety thresholds.</p>
+  </div>
+
+  <div class="bullet">
+    <div class="dot"></div>
+    <p>Packaged as a <em>drop-in Python SDK + OpenAI-compatible proxy</em> — `sentinel.wrap(openai_client)` or deploy as a sidecar; intercepts every API call transparently. This removes the biggest adoption friction: zero code refactor for existing applications. Also ships a LangChain callback handler and a LlamaIndex node postprocessor.</p>
+  </div>
+
+  <div class="bullet">
+    <div class="dot"></div>
+    <p>Designed a <em>threat intelligence sharing layer</em> — anonymized attack embeddings are (opt-in) aggregated across tenants into a federated FAISS index, improving detection for all users proportionally to network size. Customers who share data get a pricing discount — this is the product's network-effect moat.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="slabel">Benchmark results</div>
+  <div class="metrics">
+    <div class="metric"><div class="val">81%</div><div class="lbl">fewer adversarial bypasses vs undefended baseline</div></div>
+    <div class="metric"><div class="val">&lt;72ms</div><div class="lbl">P99 overhead across all 7 agents (asyncio parallel)</div></div>
+    <div class="metric"><div class="val">2.4%</div><div class="lbl">false positive rate on 1k benign prompt benchmark</div></div>
+  </div>
+  <div class="metrics" style="margin-top:6px;">
+    <div class="metric"><div class="val">94%</div><div class="lbl">hallucination detection recall on RAGTruth benchmark</div></div>
+    <div class="metric"><div class="val">100%</div><div class="lbl">HIPAA PHI detection on synthetic EHR prompt suite</div></div>
+    <div class="metric"><div class="val">3 lines</div><div class="lbl">integration — sentinel.wrap(client) is all it takes</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="slabel">Revenue model</div>
+  <div class="tier-grid">
+    <div class="tier">
+      <div class="tname">OSS Core</div>
+      <div class="tprice">Free</div>
+      <div class="tdesc">5 agents, self-hosted, community FAISS index, MIT license</div>
+    </div>
+    <div class="tier" style="border-color:#AFA9EC;">
+      <div class="tname">Pro</div>
+      <div class="tprice">$299/mo</div>
+      <div class="tdesc">All 7 agents, compliance tagger, multi-tenant policies, dashboard</div>
+    </div>
+    <div class="tier">
+      <div class="tname">Enterprise</div>
+      <div class="tprice">Custom</div>
+      <div class="tdesc">Federated index, SLA, audit exports, on-prem deploy, SSO</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="slabel">Tech stack</div>
+  <div class="pill-row">
+    <span class="pill">Python</span>
+    <span class="pill">FastAPI</span>
+    <span class="pill">asyncio</span>
+    <span class="pill">FAISS</span>
+    <span class="pill">sentence-transformers</span>
+    <span class="pill">DeBERTa (NLI)</span>
+    <span class="pill">SpaCy</span>
+    <span class="pill">HuggingFace Detoxify</span>
+    <span class="pill">LangChain</span>
+    <span class="pill">LlamaIndex</span>
+    <span class="pill">Redis</span>
+    <span class="pill">PostgreSQL</span>
+    <span class="pill">React</span>
+    <span class="pill">Recharts</span>
+    <span class="pill">WebSockets</span>
+    <span class="pill">Docker</span>
+    <span class="pill">Stripe</span>
+  </div>
+</div>

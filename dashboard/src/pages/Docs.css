@@ -358,3 +358,18 @@
   .arch-diagram { flex-direction: column; align-items: flex-start; }
   .arch-arrow { transform: rotate(90deg); }
 }
+
+@media (max-width: 768px) {
+  .docs-content { padding: 20px 16px 60px; }
+  .docs-body h1 { font-size: 1.6rem; }
+  .cb-header, .cb-pre { padding-left: 12px; padding-right: 12px; }
+  .agent-table, .scope-table { font-size: 0.75rem; }
+  .at-header, .at-row { grid-template-columns: 1fr; gap: 4px; padding: 12px; }
+  .scope-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+@media (max-width: 480px) {
+  .docs-page { padding-top: 56px; }
+  .docs-body h1 { font-size: 1.4rem; }
+  .doc-alert { font-size: 0.8rem; padding: 12px; }
+}

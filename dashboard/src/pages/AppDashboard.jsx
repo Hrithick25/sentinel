@@ -7,7 +7,7 @@ import {
   ChevronRight, Wifi, WifiOff, BarChart3, FileText,
   Bot, Cpu
 } from 'lucide-react'
-import { auth, onAuthStateChanged, signOut } from '../firebase'
+import { auth, onAuthStateChanged, signOut, db, doc, getDoc } from '../firebase'
 import './AppDashboard.css'
 
 const GATEWAY = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8000'
@@ -55,30 +55,38 @@ const DEMO_ANALYTICS = {
 }
 
 const DEMO_AGENTS = {
+  // v1 core agents
   injection_scout: 0.88,
   pii_sentinel: 0.91,
-  toxicity_screener: 0.76,
   jailbreak_guard: 0.84,
+  toxicity_screener: 0.76,
   hallucination_probe: 0.72,
+  context_anchor: 0.71,
   compliance_tagger: 0.79,
-  brand_guard: 0.67,
-  multilingual_guard: 0.81,
+  // v2 agents
+  response_safety: 0.85,
+  locale_compliance_router: 0.81,  // formerly MultilingualGuard
   tool_call_safety: 0.74,
+  brand_guard: 0.67,
   token_anomaly: 0.69,
+  // v3 agents
+  prompt_lineage: 0.65,
   intent_classifier: 0.83,
   adversarial_rephrasing: 0.77,
-  response_safety: 0.85,
-  context_anchor: 0.71,
-  prompt_lineage: 0.65,
+  // v4 new agents
+  jailbreak_pattern_detector: 0.92, // DAN attacks, roleplay bypass
+  cost_anomaly_detector: 0.70,      // runaway token spend
+  agentic_loop_breaker: 0.68,       // infinite tool-call loop detection
 }
 
 const DEMO_AUDIT = [
-  { audit_id: 'a1', timestamp: new Date(Date.now() - 30000).toISOString(), decision: 'BLOCK', aggregate_score: 0.91, triggering_agent: 'jailbreak_guard', latency_ms: 92, compliance_tags: ['DPDP'] },
+  { audit_id: 'a1', timestamp: new Date(Date.now() - 30000).toISOString(), decision: 'BLOCK', aggregate_score: 0.93, triggering_agent: 'jailbreak_pattern_detector', latency_ms: 88, compliance_tags: ['DPDP'] },
   { audit_id: 'a2', timestamp: new Date(Date.now() - 65000).toISOString(), decision: 'ALLOW', aggregate_score: 0.04, triggering_agent: null, latency_ms: 74, compliance_tags: [] },
   { audit_id: 'a3', timestamp: new Date(Date.now() - 120000).toISOString(), decision: 'REWRITE', aggregate_score: 0.48, triggering_agent: 'pii_sentinel', latency_ms: 108, compliance_tags: ['GDPR'] },
-  { audit_id: 'a4', timestamp: new Date(Date.now() - 200000).toISOString(), decision: 'ALLOW', aggregate_score: 0.07, triggering_agent: null, latency_ms: 81, compliance_tags: [] },
+  { audit_id: 'a4', timestamp: new Date(Date.now() - 200000).toISOString(), decision: 'BLOCK', aggregate_score: 0.85, triggering_agent: 'agentic_loop_breaker', latency_ms: 62, compliance_tags: [] },
   { audit_id: 'a5', timestamp: new Date(Date.now() - 310000).toISOString(), decision: 'BLOCK', aggregate_score: 0.87, triggering_agent: 'injection_scout', latency_ms: 96, compliance_tags: ['DPDP', 'GDPR'] },
   { audit_id: 'a6', timestamp: new Date(Date.now() - 450000).toISOString(), decision: 'ALLOW', aggregate_score: 0.11, triggering_agent: null, latency_ms: 68, compliance_tags: [] },
+  { audit_id: 'a7', timestamp: new Date(Date.now() - 600000).toISOString(), decision: 'BLOCK', aggregate_score: 0.79, triggering_agent: 'cost_anomaly_detector', latency_ms: 45, compliance_tags: [] },
 ]
 
 /* ── stat card ────────────────────────────────────────── */
@@ -146,58 +154,7 @@ export default function AppDashboard() {
   const navigate                  = useNavigate()
 
   /* ── Auth guard ─────────────────────────────── */
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      if (!u) {
-        navigate('/signin')
-        return
-      }
-      setUser(u)
-      setLoading(false)
-      await bootstrapGateway(u)
-    })
-    return unsub
-  }, [navigate])
-
-  /* ── Gateway bootstrap ─────────────────────── */
-  const bootstrapGateway = useCallback(async (u) => {
-    try {
-      // 1. Register tenant (idempotent — 409 is fine)
-      const regBody = {
-        tenant_id: u.uid.slice(0, 32),
-        name: u.displayName || u.email?.split('@')[0] || 'user',
-        email: u.email || 'user@sentinel.ai',
-        password: u.uid.slice(0, 16),
-        use_case: 'dashboard',
-      }
-      await fetch(`${GATEWAY}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(regBody),
-        signal: AbortSignal.timeout(4000),
-      })
-
-      // 2. Get JWT
-      const form = new URLSearchParams()
-      form.append('username', u.uid.slice(0, 32))
-      form.append('password', u.uid.slice(0, 16))
-      const tokenRes = await fetch(`${GATEWAY}/auth/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: form.toString(),
-        signal: AbortSignal.timeout(4000),
-      })
-      if (!tokenRes.ok) throw new Error('Token failed')
-      const { access_token } = await tokenRes.json()
-      setGatewayJwt(access_token)
-      setOnline(true)
-      await fetchAll(access_token)
-      openWs(access_token)
-    } catch {
-      setOnline(false)
-      // use demo data — already set as default state
-    }
-  }, [])
+  const [isPro, setIsPro] = useState(false)
 
   /* ── Fetch all data ────────────────────────── */
   const fetchAll = useCallback(async (jwt) => {
@@ -217,14 +174,6 @@ export default function AppDashboard() {
     }
   }, [])
 
-  /* ── Manual refresh ────────────────────────── */
-  const handleRefresh = async () => {
-    if (!gatewayJwt) return
-    setRefreshing(true)
-    await fetchAll(gatewayJwt)
-    setRefreshing(false)
-  }
-
   /* ── WebSocket for real-time events ─────────── */
   const openWs = useCallback((jwt) => {
     if (wsRef.current) wsRef.current.close()
@@ -239,6 +188,77 @@ export default function AppDashboard() {
     wsRef.current = ws
     return () => ws.close()
   }, [])
+
+  /* ── Gateway bootstrap ─────────────────────── */
+  const bootstrapGateway = useCallback(async (u) => {
+    try {
+      const regBody = {
+        tenant_id: u.uid.slice(0, 32),
+        name: u.displayName || u.email?.split('@')[0] || 'user',
+        email: u.email || 'user@sentinel.ai',
+        password: u.uid.slice(0, 16),
+        use_case: 'dashboard',
+      }
+      await fetch(`${GATEWAY}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(regBody),
+        signal: AbortSignal.timeout(1500),
+      })
+
+      const form = new URLSearchParams()
+      form.append('username', u.uid.slice(0, 32))
+      form.append('password', u.uid.slice(0, 16))
+      const tokenRes = await fetch(`${GATEWAY}/auth/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: form.toString(),
+        signal: AbortSignal.timeout(1500),
+      })
+      if (!tokenRes.ok) throw new Error('Token failed')
+      const { access_token } = await tokenRes.json()
+      setGatewayJwt(access_token)
+      setOnline(true)
+      await fetchAll(access_token)
+      openWs(access_token)
+    } catch {
+      setOnline(false)
+    }
+  }, [fetchAll, openWs])
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      if (!u) {
+        navigate('/signin')
+        return
+      }
+      setUser(u)
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', u.uid))
+        if (userDoc.exists() && userDoc.data().plan === 'pro') {
+          setIsPro(true)
+          await bootstrapGateway(u)
+        } else {
+          setIsPro(false)
+          // Free users still see the dashboard, just with demo data
+        }
+      } catch (err) {
+        console.error(err)
+        setIsPro(false)
+      }
+      setLoading(false)
+    })
+    return unsub
+  }, [navigate, bootstrapGateway])
+
+  /* ── Manual refresh ────────────────────────── */
+  const handleRefresh = async () => {
+    if (!gatewayJwt) return
+    setRefreshing(true)
+    await fetchAll(gatewayJwt)
+    setRefreshing(false)
+  }
 
   useEffect(() => () => wsRef.current?.close(), [])
 
@@ -266,6 +286,22 @@ export default function AppDashboard() {
 
   return (
     <div className="app-dash">
+      {/* ── Free-tier upgrade banner ─────────── */}
+      {!isPro && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+          padding: '10px 20px', background: 'linear-gradient(90deg, rgba(99,102,241,0.15), rgba(6,182,212,0.1))',
+          borderBottom: '1px solid rgba(99,102,241,0.2)', fontSize: '0.85rem', color: 'var(--text-muted)',
+          flexWrap: 'wrap', textAlign: 'center',
+        }}>
+          <Zap size={14} color="#818cf8" />
+          <span>You're viewing <strong style={{color:'var(--text)'}}>demo data</strong>. Upgrade to Pro for live threat analytics, compliance exports, and real-time monitoring.</span>
+          <button onClick={() => navigate('/pricing')} className="btn-primary" style={{ padding: '5px 14px', fontSize: '0.8rem' }}>
+            Upgrade to Pro
+          </button>
+        </div>
+      )}
+
       {/* ── Header ─────────────────────────────── */}
       <div className="dash-header">
         <div className="dash-header-left">
@@ -286,7 +322,7 @@ export default function AppDashboard() {
         <div className="dash-header-right">
           <div className={`gateway-status ${online ? 'online' : 'offline'}`}>
             {online ? <Wifi size={13} /> : <WifiOff size={13} />}
-            <span>{online ? 'Gateway connected' : 'Demo mode — gateway offline'}</span>
+            <span>{online ? 'Gateway connected' : (isPro ? 'Gateway offline — showing cached data' : 'Free tier — demo data')}</span>
           </div>
           <button
             className="dash-btn-ghost"
@@ -355,9 +391,9 @@ export default function AppDashboard() {
         />
         <StatCard
           icon={Cpu}
-          label="FAISS Attack Vectors"
+          label="Threat Memory Vectors"
           value={analytics.faiss_vectors?.toLocaleString() ?? '—'}
-          sub="known attack patterns"
+          sub="known attack patterns cached"
           color="#a78bfa"
         />
       </div>
@@ -451,7 +487,7 @@ export default function AppDashboard() {
               {events.length === 0 ? (
                 <div className="stream-empty">
                   <WifiOff size={20} color="var(--text-muted)" />
-                  <p>{online ? 'Waiting for events…' : 'Connect the gateway to see live events'}</p>
+                  <p>{online ? 'Waiting for events…' : (isPro ? 'Ensure your gateway is running (localhost:8000) to see live events.' : '⚡ Upgrade to Pro to connect your gateway and see live events.')}</p>
                 </div>
               ) : (
                 events.slice(0, 15).map((ev, i) => (
@@ -472,7 +508,7 @@ export default function AppDashboard() {
             <div className="panel-header">
               <div className="panel-title">
                 <Bot size={16} />
-                <h2>Agent Confidence</h2>
+                <h2>Agent Confidence <span style={{fontSize:'11px', color:'var(--text-muted)', fontWeight:400}}>(19 agents)</span></h2>
                 {!online && <span className="demo-tag">demo</span>}
               </div>
             </div>
@@ -495,6 +531,9 @@ export default function AppDashboard() {
           <div>
             <strong>Gateway not connected</strong> — You're viewing demo data. To connect your live gateway:
             <code>uvicorn sentinel.gateway.main:app --reload --port 8000</code>
+            <span style={{display:'block', marginTop:'6px', color:'var(--text-muted)', fontSize:'12px'}}>
+              Running 19-agent v4 mesh · Multi-Agent Consensus · Real-time WebSocket stream
+            </span>
           </div>
         </div>
       )}

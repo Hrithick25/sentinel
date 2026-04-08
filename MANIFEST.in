@@ -1,0 +1,13 @@
+include LICENSE
+include README.md
+include pyproject.toml
+include requirements.txt
+include .env.example
+
+recursive-include sentinel *.py *.pyi py.typed
+recursive-exclude tests *
+recursive-exclude dashboard *
+recursive-exclude scripts *
+recursive-exclude .agent *
+recursive-exclude __pycache__ *
+global-exclude *.pyc *.pyo *.egg-info

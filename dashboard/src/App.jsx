@@ -86,6 +86,11 @@ function Navbar() {
           <NavLink to="/pricing" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             Pricing
           </NavLink>
+          {user && (
+            <NavLink to="/app" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Dashboard
+            </NavLink>
+          )}
         </div>
 
         {/* Actions */}
@@ -133,7 +138,11 @@ function Navbar() {
           <NavLink to="/"       end onClick={() => setMenuOpen(false)}>Home</NavLink>
           <NavLink to="/docs"       onClick={() => setMenuOpen(false)}>How It Works</NavLink>
           <NavLink to="/pricing"    onClick={() => setMenuOpen(false)}>Pricing</NavLink>
-          {!user && (
+          {user ? (
+            <NavLink to="/app" onClick={() => setMenuOpen(false)} style={{ color: 'var(--text)', fontWeight: 600 }}>
+              Dashboard
+            </NavLink>
+          ) : (
             <NavLink to="/signin" onClick={() => setMenuOpen(false)} className="mobile-signin-link">
               Sign In
             </NavLink>
@@ -165,31 +174,27 @@ function Footer() {
             <span className="cert-badge">GDPR</span>
             <span className="cert-badge">RBI</span>
             <span className="cert-badge">DPDP 2023</span>
-            <span className="cert-badge">Open Source</span>
           </div>
         </div>
 
         <div className="footer-col">
           <h4>Product</h4>
-          <a href="/docs">How It Works</a>
-          <a href="/pricing">Pricing</a>
-          <a href="#">Python SDK</a>
-          <a href="#">API Reference</a>
+          <NavLink to="/docs">How It Works</NavLink>
+          <NavLink to="/pricing">Pricing</NavLink>
+          <a href="https://pypi.org/project/sentinel-ai-sdk/" target="_blank" rel="noopener noreferrer">Python SDK</a>
         </div>
 
         <div className="footer-col">
           <h4>Security</h4>
-          <a href="#">Prompt Protection</a>
-          <a href="#">PII Masking</a>
-          <a href="#">Jailbreak Guard</a>
-          <a href="#">Compliance</a>
+          <NavLink to="/docs">Prompt Protection</NavLink>
+          <NavLink to="/docs">PII Masking</NavLink>
+          <NavLink to="/docs">Jailbreak Guard</NavLink>
+          <NavLink to="/docs">Compliance</NavLink>
         </div>
 
         <div className="footer-col">
           <h4>Company</h4>
-          <a href="#">About</a>
-          <a href="#">GitHub</a>
-          <a href="#">Contact</a>
+          <a href="mailto:hello@sentinel.ai">Contact</a>
           <a href="#">Privacy Policy</a>
         </div>
       </div>

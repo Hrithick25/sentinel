@@ -1,0 +1,358 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-sans);
+  }
+
+  .wrap {
+    padding: 1rem 0;
+  }
+
+  .page-block {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.1rem;
+    background: var(--color-background-secondary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .page-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .score-pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .s-great {
+    background: var(--color-background-success);
+    color: var(--color-text-success);
+  }
+
+  .s-good {
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+  }
+
+  .s-ok {
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+  }
+
+  .s-fix {
+    background: var(--color-background-danger);
+    color: var(--color-text-danger);
+  }
+
+  .items {
+    padding: 0.75rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .dot-ok {
+    background: #1D9E75;
+  }
+
+  .dot-warn {
+    background: #BA7517;
+  }
+
+  .dot-fix {
+    background: #E24B4A;
+  }
+
+  .verdict-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .verdict-card {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 0.9rem 1.1rem;
+    background: var(--color-background-primary);
+  }
+
+  .vc-label {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .vc-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .vc-sub {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 3px;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 1.25rem 0 0.6rem;
+  }
+</style>
+<div class="wrap">
+
+  <div class="verdict-row">
+    <div class="verdict-card">
+      <div class="vc-label">Overall verdict</div>
+      <div class="vc-val">Strong portfolio project</div>
+      <div class="vc-sub">Not yet enterprise-ready, but resume-ready now</div>
+    </div>
+    <div class="verdict-card">
+      <div class="vc-label">Biggest strength</div>
+      <div class="vc-val">Code quality &amp; UI polish</div>
+      <div class="vc-sub">Design system, animations, and component structure are professional</div>
+    </div>
+  </div>
+
+  <div class="section-title">Page-by-page review</div>
+
+  <div class="page-block">
+    <div class="page-header">
+      <span class="page-name">Landing Page (Home)</span>
+      <span class="score-pill s-great">Very Good</span>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>Hero copy is clear and human — "Keep your AI safe and honest. One line of code."
+        is excellent. No jargon.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Threat explanations are brilliant — you paired each technical term with plain
+        English: "Prompt Injection → Someone tricks your AI". This is exactly right.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>3-step "How it works" (pip install → wrap → protected) is simple and convincing.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Compliance section (GDPR, DPDP 2023, RBI, HIPAA) adds strong enterprise
+        credibility.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>CountUp animation for stats (99.9% threats caught) adds polish.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>The live dashboard mockup shows hardcoded numbers (12,394 requests, 218 threats
+        blocked). This is fine for now but could mislead if someone thinks it's real data.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>"AI Guardrail · Open Source · Built in India" badge in hero — the Open Source
+        claim needs to be real. If the pip package doesn't exist on PyPI yet, this is misleading.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>CTA says "Protect My AI" → goes to /pricing. But there's no actual product to buy
+        yet. The button should say "Join Waitlist" or "View Roadmap" to be honest.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block">
+    <div class="page-header">
+      <span class="page-name">Docs Page</span>
+      <span class="score-pill s-good">Good — impressive detail</span>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>3-panel layout (sidebar + content + TOC) is exactly what a real docs site looks
+        like. Very professional structure.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>15-agent decision mesh table is genuinely impressive — shows deep thought about
+        the product architecture.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>All 4 integrations covered: OpenAI, Anthropic, LangChain, Azure OpenAI — this is
+        what real developers care about.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Copy buttons on code blocks, search bar in sidebar — these small UX details matter
+        and show professionalism.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>The quickstart says "pip install sentinel-ai-sdk" and references app.sentinel.ai
+        — neither exist. This will confuse anyone who tries to follow it.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>Docker + Kafka + Redis + Postgres self-hosted docs are very advanced. Great for
+        showing depth, but may feel like overengineering for a project with no live backend.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>Sidebar search doesn't actually filter — it's just a UI placeholder. Add a note
+        "coming soon" or implement basic filtering.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>TOC on the right always shows the same 5 items regardless of which doc is open.
+        It should update per section.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block">
+    <div class="page-header">
+      <span class="page-name">Pricing Page</span>
+      <span class="score-pill s-great">Excellent</span>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>3-tier pricing (Free → Pro ₹4,500/mo → Enterprise Custom) is exactly the right
+        structure for a SaaS.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Annual/Monthly toggle with "Save 20%" is a great touch — shows product maturity
+        thinking.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>FAQ section answers the most real questions (what's a request, what if I exceed
+        limits, Indian language support).
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Indian pricing in ₹ with DPDP/RBI compliance focus is a smart differentiator —
+        nobody else is doing India-first AI security.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>"Start Free Trial" on Pro plan creates an expectation of a working product.
+        Should say "Join Beta" or "Get Early Access" until the backend is live.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>hello@sentinel.ai email in Enterprise CTA — make sure this inbox actually exists
+        and you'll respond, or change to a Google Form.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block">
+    <div class="page-header">
+      <span class="page-name">Sign In / Sign Up</span>
+      <span class="score-pill s-good">Good</span>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>Firebase auth with Google + Email/Password is production-grade. This is real,
+        working infrastructure.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Friendly error messages (not raw Firebase codes) show attention to UX.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Clean design — glowing background, glass card, good form UX.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>"Forgot password?" button has no handler — it's a dead button right now. Either
+        implement it or remove it.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>After signing in, user goes to /app (dashboard) — but the dashboard shows
+        simulated/demo data. Make it very clear with a "DEMO" tag so users know.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-block">
+    <div class="page-header">
+      <span class="page-name">App Dashboard</span>
+      <span class="score-pill s-good">Good — best page technically</span>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>Stat cards (requests, threats blocked, safe rate, latency) with trend indicators
+        look genuinely professional.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Audit table with filter buttons (All, Block, Rewrite, Allow), badge colors, and
+        decision scores is exactly what enterprise buyers want to see.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Live event stream panel with animated dots is a great UI detail.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>"DEMO" tag on panels is honest and correct — keep this.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>The "Gateway: Offline" status (amber warning) when no backend is connected is
+        good. But the offline callout with pip install instructions could be clearer for non-developers.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>Dashboard uses demo/simulated data. The most impactful next step for your project
+        is wiring this to a real Python backend — even a tiny FastAPI endpoint.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Overall assessment</div>
+  <div class="page-block">
+    <div class="items">
+      <div class="item">
+        <div class="dot dot-ok"></div>Design system quality: Professional. Space Grotesk + Inter, dark theme, glass
+        cards, animations — this is better than most real SaaS landing pages.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>Concept depth: Excellent. 15 agents, multi-tenant, FAISS, Bayesian consensus —
+        shows you understand the problem space deeply.
+      </div>
+      <div class="item">
+        <div class="dot dot-ok"></div>India-first positioning (₹ pricing, DPDP 2023, Aadhaar PII, Hindi/Tamil support)
+        is a genuine competitive angle.
+      </div>
+      <div class="item">
+        <div class="dot dot-warn"></div>The gap between what the site promises and what exists is the main risk. A
+        developer who tries "pip install sentinel-ai-sdk" will hit a wall immediately.
+      </div>
+      <div class="item">
+        <div class="dot dot-fix"></div>One recommendation: publish a minimal real pip package that does even 20% of
+        what's described. That single step turns this from a concept into a real open-source project.
+      </div>
+    </div>
+  </div>
+
+</div>

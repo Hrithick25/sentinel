@@ -732,7 +732,11 @@
 }
 
 @media (max-width: 768px) {
-  .hero-headline { font-size: 2.4rem; }
+  .hero-left { align-items: center; text-align: center; }
+  .hero-badge { margin: 0 auto 24px; }
+  .hero-headline { font-size: 2.2rem; margin-bottom: 16px; }
+  .hero-desc { font-size: 0.95rem; line-height: 1.6; }
+  .hero-cta { justify-content: center; width: 100%; }
   .threats-grid { grid-template-columns: 1fr; }
   .steps-row { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr 1fr; }
@@ -740,7 +744,7 @@
   .dash-stats { grid-template-columns: repeat(2, 1fr); }
   .hero-proof { flex-direction: column; width: 100%; }
   .proof-divider { height: 1px; width: 100%; }
-  .proof-stat { padding: 8px 0; }
+  .proof-stat { padding: 8px 0; align-items: center; text-align: center; }
 }
 
 @media (max-width: 480px) {

@@ -5,7 +5,7 @@ import {
   Lock, Eye, AlertTriangle, Globe,
   ChevronRight, Fingerprint, Database,
   BarChart3, Cpu, Users, Check,
-  MessageSquare, Bot, Sparkles, Shield
+  MessageSquare, Bot, Sparkles, Shield, Activity, BookOpen
 } from 'lucide-react'
 import SentinelLogo from '../components/SentinelLogo'
 import './Landing.css'
@@ -86,10 +86,10 @@ const FEATURES = [
     desc: 'Phone numbers, Aadhaar, emails, and financial data are automatically detected and redacted before reaching the AI model.',
   },
   {
-    icon: <MessageSquare size={20} />,
+    icon: <Lock size={20} />,
     color: '#f59e0b',
-    title: 'Multi-Language Support',
-    desc: 'Works in Hindi, Tamil, English, Arabic, and 50+ languages. Protection is not limited to English-only inputs.',
+    title: 'Jailbreak Pattern Detector',
+    desc: 'Catches DAN attacks, roleplay exploits, and character bypass attempts — distinct from prompt injection. The #1 attack category in 2025.',
   },
   {
     icon: <Database size={20} />,
@@ -100,14 +100,14 @@ const FEATURES = [
   {
     icon: <Cpu size={20} />,
     color: '#8b5cf6',
-    title: 'Works With Any AI',
-    desc: 'One SDK wrap covers OpenAI, Claude, Gemini, Azure OpenAI, and any API-compatible model. No vendor lock-in.',
+    title: 'Agentic Loop Breaker',
+    desc: 'Detects infinite tool-call loops in LangGraph, CrewAI, and AutoGPT agents at runtime. Nobody else has built this as middleware yet.',
   },
   {
-    icon: <BarChart3 size={20} />,
+    icon: <Globe size={20} />,
     color: '#ec4899',
-    title: 'Live Dashboard',
-    desc: 'See threats blocked, risk scores, and usage patterns in a real-time dashboard. Know your AI is working safely.',
+    title: 'Locale & Compliance Router',
+    desc: 'Routes Hindi, Tamil, and 50+ language inputs to locale-specific compliance rules — DPDP 2023 for India, GDPR for EU. Not just detection.',
   },
 ]
 
@@ -179,9 +179,9 @@ export default function Landing() {
         <div className="hero-inner container">
           <div className="hero-left">
             {/* Badge */}
-            <div className="hero-badge animate-fade-in">
+            <div className="hero-badge animate-fade-in delay-1">
               <span className="hero-badge-dot" />
-              AI Guardrail  ·  Open Source  ·  Built in India
+              AI Guardrail · Private Beta
             </div>
 
             <h1 className="hero-headline animate-fade-in delay-1">
@@ -197,10 +197,10 @@ export default function Landing() {
 
             <div className="hero-cta animate-fade-in delay-3">
               <Link to="/pricing" className="btn-primary large">
-                Protect My AI <ArrowRight size={18} />
+                Get Early Access <ArrowRight size={18} />
               </Link>
               <Link to="/docs" className="btn-secondary large">
-                <Terminal size={17} /> See How It Works
+                <BookOpen size={18} /> Read Docs
               </Link>
             </div>
 
@@ -217,8 +217,8 @@ export default function Landing() {
               </div>
               <div className="proof-divider" />
               <div className="proof-stat">
-                <span className="proof-num">50+</span>
-                <span className="proof-label">Languages</span>
+                <span className="proof-num">19</span>
+                <span className="proof-label">Security Agents</span>
               </div>
             </div>
           </div>
@@ -455,9 +455,9 @@ export default function Landing() {
               {/* Dashboard mockup */}
               <div className="dash-card glass-card">
                 <div className="dash-header">
-                  <BarChart3 size={14} color="var(--accent-bright)" />
-                  <span>Sentinel Dashboard</span>
-                  <span className="live-pill">● LIVE</span>
+                  <Activity size={14} color="var(--accent-bright)" />
+                  <span>Real-time Sentinel Matrix</span>
+                  <span className="live-pill" style={{marginLeft: 'auto'}}>DEMO</span>
                 </div>
 
                 <div className="dash-stats">
@@ -539,7 +539,7 @@ export default function Landing() {
             </div>
             <h2>Your AI is live. Is it safe?</h2>
             <p>
-              Start with our free open-source version. No credit card. No infrastructure.
+              Start with our free SDK. No credit card. No infrastructure.
               Just copy one line of code and your AI is protected.
             </p>
             <div className="cta-actions">
@@ -551,7 +551,7 @@ export default function Landing() {
               </Link>
             </div>
             <p className="cta-fine">
-              Free forever for open source &nbsp;·&nbsp; No vendor lock-in &nbsp;·&nbsp; Built in India 🇮🇳
+              Free tier forever &nbsp;·&nbsp; No vendor lock-in &nbsp;·&nbsp; Pro dashboard included
             </p>
           </div>
         </div>

@@ -1,0 +1,40 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SENTINEL — requirements.txt (for Docker self-hosted gateway ONLY)
+# ═══════════════════════════════════════════════════════════════════════════════
+#  If you're using the SDK client via pip, you only need:
+#    pip install sentinel-ai-sdk
+#  This file is used by the Dockerfile to install gateway dependencies.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Gateway server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+
+# ML / NLP agents
+sentence-transformers>=2.7.0
+faiss-cpu>=1.8.0
+spacy>=3.7.4
+transformers>=4.40.0
+torch>=2.2.0
+detoxify>=0.5.2
+
+# Storage
+redis>=5.0.4
+sqlalchemy>=2.0.30
+asyncpg>=0.29.0
+alembic>=1.13.1
+
+# Auth & Security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.9
+
+# Utilities
+httpx>=0.27.0
+numpy>=1.26.4
+python-dotenv>=1.0.1
+orjson>=3.10.3
+websockets>=12.0
+prometheus-client>=0.20.0

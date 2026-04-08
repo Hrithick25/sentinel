@@ -1,0 +1,143 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentinel-ai-sdk"
+version = "4.0.0"
+description = "SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh: prompt injection, PII, jailbreak pattern detection, DAN attacks, cost anomaly detection, agentic loop breaking, hallucination, and compliance routing."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "SENTINEL Labs"},
+]
+keywords = [
+    "llm", "safety", "trust", "prompt-injection", "pii", "toxicity",
+    "jailbreak", "hallucination", "guardrails", "ai-safety", "security",
+    "enterprise", "compliance", "gdpr", "hipaa", "dpdp",
+    "agentic", "dan-attack", "jailbreak-detection", "cost-anomaly",
+    "loop-detection", "locale-compliance",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Security",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
+
+# ─── Core SDK: ULTRA-LIGHTWEIGHT ──────────────────────────────────────────────
+# `pip install sentinel-ai-sdk` pulls ONLY these 2 deps (~2MB total)
+# No database, no ML models, no Redis, no Docker, no PyTorch.
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+]
+
+[project.optional-dependencies]
+# ── LLM framework integrations ────────────────────────────────────────────────
+langchain = ["langchain-core>=0.1.0"]
+llamaindex = ["llama-index-core>=0.10.0"]
+
+# ── Self-hosted Gateway server (Docker or bare-metal) ──────────────────────────
+# `pip install sentinel-ai-sdk[server]`
+# Requires Postgres + Redis (use docker-compose.dev.yml to spin them up)
+server = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "pydantic-settings>=2.2.0",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy>=2.0.30",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.1",
+    "redis>=5.0.4",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.9",
+    "orjson>=3.10.3",
+    "websockets>=12.0",
+    "prometheus-client>=0.20.0",
+]
+
+# ── Supabase backend (cloud-hosted alternative to Docker Postgres) ─────────────
+# `pip install sentinel-ai-sdk[supabase]`
+supabase = [
+    "supabase>=2.4.0",
+    "pydantic-settings>=2.2.0",
+    "python-dotenv>=1.0.1",
+]
+
+# ── ML/NLP agents (models download on first use) ──────────────────────────────
+# `pip install sentinel-ai-sdk[ml]`
+ml = [
+    "sentence-transformers>=2.7.0",
+    "faiss-cpu>=1.8.0",
+    "spacy>=3.7.4",
+    "transformers>=4.40.0",
+    "torch>=2.2.0",
+    "detoxify>=0.5.2",
+    "numpy>=1.26.4",
+]
+
+# ── Kafka audit layer (optional, for high-throughput) ──────────────────────────
+kafka = ["aiokafka>=0.10.0"]
+
+# ── Everything (self-hosted with all features) ─────────────────────────────────
+full = [
+    "sentinel-ai-sdk[server,ml,kafka,langchain,llamaindex]",
+    "stripe>=9.5.0",
+]
+
+# ── Development & testing ──────────────────────────────────────────────────────
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.6",
+    "httpx>=0.27.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+]
+
+[project.scripts]
+sentinel-gateway = "sentinel.gateway.main:app"
+
+[project.urls]
+Homepage = "https://github.com/sentinel-ai/sentinel-sdk"
+Documentation = "https://docs.sentinel-ai.dev"
+Repository = "https://github.com/sentinel-ai/sentinel-sdk"
+Issues = "https://github.com/sentinel-ai/sentinel-sdk/issues"
+Changelog = "https://github.com/sentinel-ai/sentinel-sdk/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["sentinel", "sentinel.*"]
+exclude = ["dashboard*", "tests*", "scripts*"]
+
+[tool.setuptools.package-data]
+sentinel = ["py.typed"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

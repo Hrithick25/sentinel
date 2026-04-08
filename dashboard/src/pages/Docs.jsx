@@ -11,46 +11,56 @@ const NAV = [
       { id: 'quickstart',     label: 'Quickstart Guide' },
       { id: 'how-it-works',   label: 'How Sentinel Works' },
       { id: 'api-keys',       label: 'API Keys & Authentication' },
+      { id: 'sandbox',        label: 'Sandbox / Test Mode' },
+      { id: 'changelog',      label: 'Changelog / Versions' },
     ],
   },
   {
     group: 'Integration',
     icon: <Code2 size={14} />,
     items: [
-      { id: 'openai',      label: 'OpenAI Client Wrap' },
-      { id: 'anthropic',   label: 'Anthropic / Claude' },
-      { id: 'langchain',   label: 'LangChain & LlamaIndex' },
-      { id: 'azure',       label: 'Azure OpenAI' },
+      { id: 'openai',         label: 'OpenAI Client Wrap' },
+      { id: 'anthropic',      label: 'Anthropic / Claude' },
+      { id: 'error-handling', label: 'Error Handling' },
     ],
   },
   {
     group: 'Configuration',
     icon: <Settings size={14} />,
     items: [
-      { id: 'policies',    label: 'Policy Profiles' },
-      { id: 'thresholds',  label: 'Agent Thresholds' },
-      { id: 'tenants',     label: 'Multi-Tenant Setup' },
+      { id: 'policies',       label: 'Policy Profiles' },
+      { id: 'thresholds',     label: 'Agent Thresholds' },
+      { id: 'tenants',        label: 'Multi-Tenant Setup' },
     ],
   },
   {
     group: 'Compliance & Audit',
     icon: <FileText size={14} />,
     items: [
-      { id: 'audit-logs',  label: 'Audit Log Format' },
-      { id: 'hipaa',       label: 'HIPAA Export' },
-      { id: 'gdpr',        label: 'GDPR Data Subject Requests' },
+      { id: 'audit-logs',     label: 'Audit Log Format' },
+      { id: 'hipaa',          label: 'HIPAA Export' },
+      { id: 'gdpr',           label: 'GDPR Data Subject Requests' },
     ],
   },
   {
     group: 'Self-Hosted',
     icon: <GitBranch size={14} />,
     items: [
-      { id: 'docker',      label: 'Docker Compose Setup' },
-      { id: 'config',      label: 'Environment Variables' },
-      { id: 'scaling',     label: 'Horizontal Scaling' },
+      { id: 'docker',         label: 'Docker Compose Setup' },
+      { id: 'config',         label: 'Environment Variables' },
     ],
   },
 ]
+
+const TOC_MAP = {
+  'quickstart': ['Install the SDK', 'Obtain Your API Key', 'Wrap Your LLM Client', 'What Happens', 'Free vs Pro'],
+  'how-it-works': ['Architecture', '19-Agent Decision Mesh'],
+  'api-keys': ['Key Format', 'Environment Variables', 'Key Scopes'],
+  'docker': ['Production Requirements', 'Quick Start', 'System Validation'],
+  'sandbox': ['Sandbox Mode', 'Testing'],
+  'error-handling': ['SentinelBlockedError', 'SentinelProRequiredError', 'Catching Errors'],
+  'changelog': ['v3.1.0 — Current', 'v3.0.1', 'v0.1.0'],
+}
 
 /* ── Copy button ──────────────────────────────────── */
 function CopyButton({ text }) {
@@ -110,12 +120,12 @@ const CONTENT = {
       <CodeBlock lang="bash" code={`pip install sentinel-ai-sdk`} />
 
       <Alert type="success">
-        <strong>Tip:</strong> The SDK is under 500 KB. All 15-agent inference runs on Sentinel's edge cluster — not your machine.
+        <strong>Tip:</strong> The SDK is under 500 KB. All 19-agent inference runs on Sentinel's edge cluster — not your machine.
       </Alert>
 
       <h2>2. Obtain Your API Key</h2>
       <p>
-        Sign up at <code>app.sentinel.ai</code> to receive your API key (format: <code>sntnl-...</code>).
+        Sign up at <code>sentinel-ai.dev</code> to receive your API key.
         Store it as an environment variable — never embed it in source code.
       </p>
       <CodeBlock lang="bash" code={`export SENTINEL_API_KEY="sntnl-your-key-here"`} />
@@ -135,8 +145,7 @@ client = openai.OpenAI(api_key="sk-openai-...")
 safe_client = sentinel.wrap(
     client,
     api_key="sntnl-your-key-here",
-    tenant_id="your-org",           # isolates your audit logs
-    policy="enterprise-strict",     # or "hipaa", "gdpr", "permissive"
+    tenant_id="your-org",
 )
 
 # Use exactly as before — Sentinel intercepts transparently
@@ -150,15 +159,18 @@ print(response.choices[0].message.content)`} />
       <ol className="doc-list">
         <li>Your Python code calls <code>safe_client.chat.completions.create()</code> as normal.</li>
         <li>The SDK serialises the payload and forwards it to the Sentinel Gateway over HTTPS.</li>
-        <li>15 security agents evaluate the prompt in parallel inside the edge cluster (typically &lt;70ms).</li>
+        <li>19 security agents evaluate the prompt in parallel inside the edge cluster (typically &lt;70ms).</li>
         <li>If clean, the request is forwarded to OpenAI. If a threat is detected, a <code>SentinelBlockedError</code> is raised with the exact violation reason.</li>
         <li>The response is scanned by the output safety layer before being returned to your application.</li>
         <li>A signed, immutable audit record is written to your organisation's ledger.</li>
       </ol>
 
-      <Alert type="warning">
-        <strong>Security Note:</strong> Never set <code>ENVIRONMENT=production</code> without rotating your <code>SECRET_KEY</code> to a cryptographically random 64-character string.
-      </Alert>
+      <h2>Free vs Pro</h2>
+      <p>The same pip package works on both tiers. Your plan is determined by your API key:</p>
+      <div className="scope-table">
+        <div className="scope-row"><code className="scope-name">Free</code><span className="scope-desc">screen(), trust_score(), wrap() — core AI protection with demo dashboard</span></div>
+        <div className="scope-row"><code className="scope-name">Pro</code><span className="scope-desc">All Free features + analytics(), compliance_export(), configure_agents(), audit_log() + live dashboard</span></div>
+      </div>
     </>
   ),
 
@@ -167,7 +179,7 @@ print(response.choices[0].message.content)`} />
       <h1>How Sentinel Works</h1>
       <p className="doc-lead">
         Sentinel is a hybrid security middleware — a lightweight SDK on your side,
-        a powerful 15-agent mesh on ours.
+        a powerful 19-agent mesh on ours.
       </p>
 
       <h2>Architecture Overview</h2>
@@ -175,8 +187,8 @@ print(response.choices[0].message.content)`} />
         {[
           { label: 'Your Application', sub: 'Python / LangChain / FastAPI', color: '#4f46e5' },
           { label: 'Sentinel SDK', sub: 'pip install (lightweight)', color: '#818cf8' },
-          { label: 'Sentinel Gateway', sub: 'Edge cluster · 15 agents · FAISS', color: '#06b6d4' },
-          { label: 'LLM Provider', sub: 'OpenAI · Anthropic · Azure', color: '#10b981' },
+          { label: 'Sentinel Gateway', sub: 'Edge cluster · 19 agents · FAISS', color: '#06b6d4' },
+          { label: 'LLM Provider', sub: 'OpenAI · Anthropic', color: '#10b981' },
         ].map((node, i) => (
           <div key={node.label} className="arch-node-wrap">
             <div className="arch-node" style={{ borderColor: node.color }}>
@@ -188,8 +200,8 @@ print(response.choices[0].message.content)`} />
         ))}
       </div>
 
-      <h2>The 15-Agent Decision Mesh</h2>
-      <p>Every request is evaluated in parallel by 15 specialised agents. A Bayesian-weighted consensus determines the final allow / block decision:</p>
+      <h2>The 19-Agent Decision Mesh</h2>
+      <p>Every request is evaluated in parallel by 19 specialised agents. A Bayesian-weighted consensus determines the final allow / block decision:</p>
 
       <div className="agent-table">
         <div className="at-header">
@@ -199,18 +211,22 @@ print(response.choices[0].message.content)`} />
           ['Injection Scout',          'Prompt Input',   'Vector-similarity + regex rules'],
           ['PII Sentinel',             'Input & Output', 'Named-entity recognition (NER)'],
           ['Jailbreak Firewall',       'Prompt Input',   'FAISS nearest-neighbour search'],
+          ['Jailbreak Pattern Detector','Prompt Input',   'DAN / roleplay / bypass pattern matching'],
           ['Toxicity Screener',        'Input & Output', 'Fine-tuned classifier'],
           ['Hallucination Probe',      'LLM Output',     'NLI entailment vs. RAG context'],
           ['Context Drift Sensor',     'Session History','Semantic embedding drift score'],
           ['Compliance Tagger',        'Input & Output', 'Rule-based + NER mapping'],
           ['Response Safety Layer',    'LLM Output',     'Post-generation policy sweep'],
-          ['Multilingual Guard',       'Input',          'Language-agnostic classification'],
+          ['Locale Compliance Router', 'Input',          'Language-aware regulatory routing'],
           ['Tool-Call Safety',         'Function Calls', 'Schema validation + permission check'],
           ['Brand & Tone Guardian',    'Output',         'Keyword + embedding similarity'],
           ['Token Anomaly Detector',   'Input',          'Statistical token distribution'],
           ['Prompt Lineage Tracker',   'Full Turn',      'Cryptographic event chaining'],
           ['Intent Classifier',        'Input',          'Multi-label intent classification'],
           ['Adversarial Rephrasing',   'Input',          'T5-based canonical normalisation'],
+          ['Cost Anomaly Detector',    'Token Usage',    'Runaway token spend detection'],
+          ['Agentic Loop Breaker',     'Tool Calls',     'Infinite tool-call loop detection'],
+          ['Response Safety',          'LLM Output',     'Post-generation output scan'],
         ].map(([agent, scope, method]) => (
           <div className="at-row" key={agent}>
             <span className="at-agent">{agent}</span>
@@ -268,55 +284,94 @@ safe_client = sentinel.wrap(
 
   docker: (
     <>
-      <h1>Docker Compose Setup</h1>
+      <h1>Self-Hosted Deployment</h1>
       <p className="doc-lead">
-        For self-hosted deployments — run the Sentinel Gateway, PostgreSQL audit database,
-        and optional Redis cache entirely on your own infrastructure.
+        Deploy Sentinel securely within your VPC using Docker Compose. All audit logs, processing, and compliance data remains entirely in your control.
       </p>
 
-      <Alert type="info">
-        <strong>Who needs this?</strong> Only Enterprise customers deploying inside a private VPC.
-        Pro Cloud users get managed infrastructure with zero Docker required.
-      </Alert>
+      <h2>Minimal Production Requirements</h2>
+      <ul>
+        <li>Docker 24.0+ & Docker Compose</li>
+        <li>2 CPU Cores, 4GB RAM (Gateway Server)</li>
+        <li>PostgreSQL Database (for persistent audit records)</li>
+      </ul>
 
-      <h2>Prerequisites</h2>
-      <CodeBlock lang="bash" code={`docker --version   # Docker 24+
-docker compose version   # v2.20+`} />
-
-      <h2>Start Core Services</h2>
-      <CodeBlock lang="bash" code={`# Clone the repository
-git clone https://github.com/sentinel-ai/sentinel
+      <h2>Quick Start</h2>
+      <p>Clone the enterprise repository and boot the core services:</p>
+      <CodeBlock lang="bash" code={`git clone https://github.com/sentinel-ai/sentinel
 cd sentinel
 
-# Copy and configure environment
+# Configure secrets
 cp .env.example .env
-# Edit .env with your SECRET_KEY and DATABASE credentials
 
-# Start PostgreSQL + Gateway (Redis optional)
+# Boot the gateway + database
 docker compose up -d postgres gateway`} />
 
-      <h2>Redis — Optional Performance Layer</h2>
-      <p>Redis is disabled by default. Enable it for policy caching, agent weight persistence, and real-time dashboard counters:</p>
-      <CodeBlock lang="bash" code={`# In .env:
-REDIS_URL=redis://localhost:6379
+      <h2>System Validation</h2>
+      <CodeBlock lang="bash" code={`# Ensure gateway is actively loaded with all security modules
+curl -s http://localhost:8000/health | grep '"status":"healthy"'`} />
+    </>
+  ),
+  sandbox: (
+    <>
+      <h1>Sandbox / Test Mode</h1>
+      <p className="doc-lead">Run end-to-end tests without triggering production policies or generating billable audit logs.</p>
+      <h2>Sandbox Mode</h2>
+      <p>Use your <code>sntnl-test-...</code> API key. This entirely isolates the requests from your production ledger.</p>
+      <CodeBlock lang="python" code={`safe_client = sentinel.wrap(client, api_key="sntnl-test-xxx")`} />
+      <h2>Testing</h2>
+      <p>Pass the <code>x-sentinel-dry-run</code> header manually if you want to see what WOULD be blocked, without actually blocking it.</p>
+    </>
+  ),
+  'error-handling': (
+    <>
+      <h1>Error Handling</h1>
+      <p className="doc-lead">Catch and respond to AI threats programmatically in your application.</p>
+      <h2>SentinelBlockedError</h2>
+      <p>When the gateway blocks a request based on consensus, the SDK raises a <code>SentinelBlockedError</code> with the request ID, risk score, and triggering agent name.</p>
+      <h2>SentinelProRequiredError</h2>
+      <p>Raised when a free-tier user calls a Pro-only method like <code>analytics()</code> or <code>compliance_export()</code>.</p>
+      <h2>Catching Errors</h2>
+      <CodeBlock lang="python" code={`from sentinel import SentinelBlockedError, SentinelProRequiredError
 
-# Then start with Redis
-docker compose up -d postgres redis gateway`} />
+try:
+    response = safe_client.chat.completions.create(...)
+except SentinelBlockedError as e:
+    print(f"Blocked: request_id={e.request_id}, score={e.score}")
+    print(f"Triggered by: {e.agent}")
 
-      <h2>Kafka — Optional High-Throughput Audit Streaming</h2>
-      <p>
-        Kafka (via Redpanda) is available for high-volume deployments exceeding 10M requests/day.
-        Without it, audit events are written directly to PostgreSQL (recommended for most deployments).
-      </p>
-      <CodeBlock lang="bash" code={`# Enable Kafka profile
-docker compose --profile full up -d
-
-# In .env:
-KAFKA_BOOTSTRAP_SERVERS=kafka:29092`} />
-
-      <h2>Health Checks</h2>
-      <CodeBlock lang="bash" code={`curl http://localhost:8000/health
-# → {"status":"healthy","db":"connected","agents":"15/15"}`} />
+# Pro feature guard
+try:
+    stats = client.analytics()
+except SentinelProRequiredError as e:
+    print(f"Pro required for: {e.feature}")
+    # → "'analytics' requires a Sentinel Pro subscription."
+    # → "Upgrade at https://sentinel-ai.dev/pricing"`} />
+    </>
+  ),
+  changelog: (
+    <>
+      <h1>Changelog / Versions</h1>
+      <p className="doc-lead">Keep track of updates to the Sentinel SDK and Gateway.</p>
+      <h2>v3.1.0 — Current</h2>
+      <ul>
+        <li>19-agent mesh with 4 new v4 agents (Jailbreak Pattern Detector, Cost Anomaly, Agentic Loop Breaker, Locale Router)</li>
+        <li>Pro / Free tier system — free users get core protection, Pro unlocks analytics + compliance exports</li>
+        <li><code>SentinelBlockedError</code> and <code>SentinelProRequiredError</code> custom exceptions</li>
+        <li>Dashboard accessible to all signed-in users (free = demo data, Pro = live gateway)</li>
+        <li>Compliance export API (JSON / CSV / PDF)</li>
+      </ul>
+      <h2>v3.0.1</h2>
+      <ul>
+        <li>15-agent mesh with Bayesian consensus engine</li>
+        <li>OpenAI and Anthropic wrappers</li>
+        <li>Live dashboard with WebSocket streaming</li>
+      </ul>
+      <h2>v0.1.0</h2>
+      <ul>
+        <li>Initial public beta release</li>
+        <li>Core injection, PII, and jailbreak detection</li>
+      </ul>
     </>
   ),
   openai: (
@@ -339,27 +394,6 @@ from anthropic import Anthropic
 client = Anthropic(api_key="...")
 safe_client = sentinel.wrap(client)
 res = safe_client.messages.create(model="claude-3-opus", messages=[...])`} />
-    </>
-  ),
-  langchain: (
-    <>
-      <h1>LangChain & LlamaIndex</h1>
-      <p className="doc-lead">Integrate Sentinel's callback handler to secure your RAG and Agents.</p>
-      <CodeBlock lang="python" code={`from sentinel.langchain import SentinelCallbackHandler
-handler = SentinelCallbackHandler()
-chain = llm | prompt | output_parser
-res = chain.invoke({"input": "Hello"}, config={"callbacks": [handler]})`} />
-    </>
-  ),
-  azure: (
-    <>
-      <h1>Azure OpenAI</h1>
-      <p className="doc-lead">Enterprise-ready Azure OpenAI payload interception.</p>
-      <CodeBlock lang="python" code={`import sentinel
-from openai import AzureOpenAI
-client = AzureOpenAI(azure_endpoint="...", api_key="...")
-safe_client = sentinel.wrap(client)
-res = safe_client.chat.completions.create(model="deployment", messages=[...])`} />
     </>
   ),
   policies: (
@@ -428,15 +462,7 @@ curl -X DELETE https://gateway/v1/audit/user/hash123`} />
 SECRET_KEY="crypto-secure-key"
 DATABASE_BACKEND="postgres"
 DATABASE_URL="postgresql+asyncpg://..."
-REDIS_URL="redis://..."
-KAFKA_BOOTSTRAP_SERVERS=""`} />
-    </>
-  ),
-  scaling: (
-    <>
-      <h1>Horizontal Scaling</h1>
-      <p className="doc-lead">Scale the Gateway stateless across Kubernetes for 10M+ RPM.</p>
-      <Alert type="info">Sentinel is inherently stateless when Redis is connected, making K8s auto-scaling trivial using CPU/Memory metrics.</Alert>
+REDIS_URL="redis://..."`} />
     </>
   ),
 }
@@ -450,7 +476,7 @@ export default function Docs() {
       {/* Sidebar */}
       <aside className="docs-sidebar">
         <div className="sidebar-search">
-          <input type="search" placeholder="Search docs…" />
+          <input type="search" placeholder="Search docs (Coming Soon)…" />
         </div>
         {NAV.map(section => (
           <div key={section.group} className="sidebar-group">
@@ -478,24 +504,18 @@ export default function Docs() {
         <div className="docs-body">
           {content}
         </div>
-        <div className="docs-feedback">
-          <p>Was this page helpful?</p>
-          <div className="fb-actions">
-            <button className="btn-secondary">👍 Yes</button>
-            <button className="btn-ghost">👎 No</button>
-          </div>
-        </div>
       </main>
 
       {/* Right TOC (page outline) */}
       <aside className="docs-toc">
         <p className="toc-title">On This Page</p>
         <ul>
-          <li><a href="#">Installation</a></li>
-          <li><a href="#">Authentication</a></li>
-          <li><a href="#">Wrapping the Client</a></li>
-          <li><a href="#">Request Flow</a></li>
-          <li><a href="#">Error Handling</a></li>
+          {(TOC_MAP[active] || []).map((t, idx) => (
+            <li key={idx}><a href="#">{t}</a></li>
+          ))}
+          {(!TOC_MAP[active] || TOC_MAP[active].length === 0) && (
+            <li><span className="muted">No sub-sections</span></li>
+          )}
         </ul>
         <div className="toc-divider" />
         <a href="#" className="toc-link-ext">

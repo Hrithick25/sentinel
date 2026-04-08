@@ -4,7 +4,7 @@
 
 .app-dash {
   min-height: 100vh;
-  padding: 0 0 4rem;
+  padding: 72px 0 4rem; /* 72px top padding to clear the fixed global navbar */
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);

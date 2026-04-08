@@ -8,6 +8,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth'
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBVkGH8-BrhPr1HWvlSCeTj40v7VqtZkW0',
@@ -22,6 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
+export const db = getFirestore(app)
 
 export {
   signInWithPopup,
@@ -29,4 +31,7 @@ export {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  doc,
+  setDoc,
+  getDoc
 }

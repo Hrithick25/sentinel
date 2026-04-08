@@ -1,0 +1,416 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-sans)}
+.screen{display:none}
+.screen.active{display:block}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.nav-logo{font-size:15px;font-weight:500;color:var(--color-text-primary);letter-spacing:-.3px}
+.nav-logo span{color:#534AB7}
+.nav-links{display:flex;gap:20px}
+.nav-link{font-size:13px;color:var(--color-text-secondary);cursor:pointer;background:none;border:none;padding:0}
+.nav-link:hover{color:var(--color-text-primary)}
+.nav-cta{font-size:13px;font-weight:500;background:#534AB7;color:#EEEDFE;border:none;padding:6px 14px;border-radius:var(--border-radius-md);cursor:pointer}
+.hero{padding:48px 24px 40px;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary)}
+.hero h1{font-size:28px;font-weight:500;line-height:1.25;color:var(--color-text-primary);max-width:480px;margin:0 auto 12px}
+.hero p{font-size:14px;color:var(--color-text-secondary);max-width:400px;margin:0 auto 24px;line-height:1.6}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:#534AB7;color:#EEEDFE;border:none;padding:9px 20px;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer}
+.btn-secondary{background:none;color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);padding:9px 20px;border-radius:var(--border-radius-md);font-size:14px;cursor:pointer}
+.btn-primary:hover,.btn-secondary:hover{opacity:.85}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--color-border-tertiary);border-top:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.metric-cell{background:var(--color-background-primary);padding:20px;text-align:center}
+.metric-val{font-size:22px;font-weight:500;color:#534AB7}
+.metric-lbl{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.section-pad{padding:32px 20px}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:16px}
+.agent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:24px}
+.agent-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px}
+.agent-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.agent-tech{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.agent-desc{font-size:12px;color:var(--color-text-secondary);margin-top:6px;line-height:1.5}
+.code-block{background:#1e1e2e;border-radius:var(--border-radius-lg);padding:16px;font-family:var(--font-mono);font-size:12px;line-height:1.7;overflow-x:auto}
+.c-purple{color:#AFA9EC}
+.c-green{color:#5DCAA5}
+.c-gray{color:#888780}
+.c-white{color:#D3D1C7}
+.c-yellow{color:#FAC775}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.plan-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;position:relative}
+.plan-card.featured{border:2px solid #534AB7}
+.plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#534AB7;color:#EEEDFE;font-size:11px;font-weight:500;padding:2px 10px;border-radius:20px;white-space:nowrap}
+.plan-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.plan-price{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.plan-price span{font-size:12px;font-weight:400;color:var(--color-text-tertiary)}
+.plan-desc{font-size:11px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.5}
+.plan-feature{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;line-height:1.4}
+.check{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+.plan-btn{width:100%;margin-top:14px;padding:8px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;font-weight:500;border:0.5px solid var(--color-border-secondary);background:none;color:var(--color-text-primary)}
+.plan-btn.featured-btn{background:#534AB7;color:#EEEDFE;border:none}
+.plan-btn:hover{opacity:.85}
+.toggle-row{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;font-size:13px;color:var(--color-text-secondary)}
+.toggle{width:36px;height:20px;background:var(--color-border-secondary);border-radius:10px;position:relative;cursor:pointer;transition:background .2s}
+.toggle.on{background:#534AB7}
+.toggle-knob{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on .toggle-knob{transform:translateX(16px)}
+.sdk-steps{counter-reset:step}
+.sdk-step{display:flex;gap:14px;margin-bottom:20px;align-items:flex-start}
+.step-num{width:24px;height:24px;border-radius:50%;background:#EEEDFE;color:#534AB7;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-content{flex:1}
+.step-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.step-desc{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;line-height:1.5}
+.copy-btn{font-size:11px;color:#534AB7;background:none;border:0.5px solid #AFA9EC;border-radius:4px;padding:2px 8px;cursor:pointer}
+.output-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;font-size:12px;font-family:var(--font-mono);line-height:1.7;margin-top:6px}
+.out-pass{color:#1D9E75}
+.out-block{color:#E24B4A}
+.out-warn{color:#BA7517}
+.out-meta{color:var(--color-text-tertiary)}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px}
+.stat-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.stat-lbl{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.stat-delta{font-size:11px;color:var(--color-text-success);margin-top:2px}
+.log-row{display:grid;grid-template-columns:70px 1fr 70px 60px;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;align-items:center}
+.log-head{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em}
+.badge-pass{background:#E1F5EE;color:#0F6E56;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500}
+.badge-block{background:#FCEBEB;color:#A32D2D;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500}
+.badge-warn{background:#FAEEDA;color:#854F0B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500}
+.bottom-nav{display:flex;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.bnav-btn{flex:1;padding:10px 4px;font-size:11px;color:var(--color-text-tertiary);background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s}
+.bnav-btn.active{color:#534AB7}
+.bnav-icon{font-size:16px}
+.page-wrap{min-height:400px}
+.annual-save{font-size:11px;color:#1D9E75;font-weight:500}
+</style>
+
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:12px;margin:1rem 0">
+<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;max-width:440px;margin:0 auto">
+
+<div class="nav">
+  <span class="nav-logo"><span>sentinel</span>.dev</span>
+  <div class="nav-links">
+    <button class="nav-link" onclick="goTo('landing')">home</button>
+    <button class="nav-link" onclick="goTo('pricing')">pricing</button>
+    <button class="nav-link" onclick="goTo('sdk')">docs</button>
+  </div>
+  <button class="nav-cta" onclick="goTo('pricing')">get started</button>
+</div>
+
+<div class="page-wrap">
+
+<div id="screen-landing" class="screen active">
+  <div class="hero">
+    <div style="display:inline-block;background:#EEEDFE;color:#3C3489;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:14px">production-grade LLM safety</div>
+    <h1>Ship AI apps that can't be broken, fooled, or sued over</h1>
+    <p>7-agent parallel safety mesh. Drop-in Python SDK. HIPAA + GDPR compliance audit trail. One line of code.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="goTo('sdk')">view quickstart</button>
+      <button class="btn-secondary" onclick="goTo('pricing')">see pricing</button>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-cell"><div class="metric-val">81%</div><div class="metric-lbl">fewer adversarial bypasses</div></div>
+    <div class="metric-cell"><div class="metric-val">&lt;72ms</div><div class="metric-lbl">P99 across all 7 agents</div></div>
+    <div class="metric-cell"><div class="metric-val">2.4%</div><div class="metric-lbl">false positive rate</div></div>
+  </div>
+
+  <div class="section-pad">
+    <div class="section-label">7-agent safety mesh</div>
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="agent-name">Injection Scout</div>
+        <div class="agent-tech">FAISS + ANN</div>
+        <div class="agent-desc">Vector similarity against 50k+ known attack embeddings</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Hallucination Probe</div>
+        <div class="agent-tech">DeBERTa NLI</div>
+        <div class="agent-desc">Per-claim grounding score — 94% recall on RAGTruth</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">PII Sentinel</div>
+        <div class="agent-tech">SpaCy NER</div>
+        <div class="agent-desc">100% HIPAA PHI detection on synthetic EHR suite</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Compliance Tagger</div>
+        <div class="agent-tech">HIPAA · GDPR · SOC2</div>
+        <div class="agent-desc">Signed JSON attestation per request for audit export</div>
+      </div>
+    </div>
+
+    <div class="section-label">3-line integration</div>
+    <div class="code-block">
+      <div><span class="c-purple">import</span> <span class="c-white">sentinel</span></div>
+      <div><span class="c-white">client</span> <span class="c-gray">=</span> <span class="c-white">openai.OpenAI()</span></div>
+      <div><span class="c-white">safe_client</span> <span class="c-gray">=</span> <span class="c-green">sentinel.wrap</span><span class="c-white">(client)</span></div>
+      <div style="margin-top:8px"><span class="c-gray"># all your existing code works unchanged</span></div>
+      <div><span class="c-white">safe_client.chat.completions.create(...)</span></div>
+    </div>
+
+    <button class="btn-primary" style="width:100%;margin-top:16px" onclick="goTo('pricing')">choose a plan</button>
+  </div>
+</div>
+
+<div id="screen-pricing" class="screen">
+  <div class="section-pad">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">simple, honest pricing</div>
+      <div style="font-size:13px;color:var(--color-text-secondary)">no per-request surprise bills</div>
+    </div>
+
+    <div class="toggle-row">
+      <span>monthly</span>
+      <div class="toggle" id="billing-toggle" onclick="toggleBilling()"><div class="toggle-knob"></div></div>
+      <span>annual <span class="annual-save" id="save-badge" style="display:none">save 20%</span></span>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <div class="plan-name">OSS Core</div>
+        <div class="plan-price">Free</div>
+        <div class="plan-desc">Self-hosted. MIT license. No limits.</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>5 agents</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>FAISS index (community)</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>LangChain callback</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#FCEBEB"/><path d="M4 4l6 6M10 4l-6 6" stroke="#A32D2D" stroke-width="1.5" stroke-linecap="round"/></svg>No compliance tagger</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#FCEBEB"/><path d="M4 4l6 6M10 4l-6 6" stroke="#A32D2D" stroke-width="1.5" stroke-linecap="round"/></svg>No dashboard</div>
+        <button class="plan-btn" onclick="goTo('sdk')">download SDK</button>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="plan-badge">most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price" id="pro-price">$299<span>/mo</span></div>
+        <div class="plan-desc">All 7 agents + compliance + dashboard.</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>All 7 agents</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Hallucination Probe</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Compliance tagger + audit export</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Multi-tenant policy engine</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Real-time dashboard</div>
+        <button class="plan-btn featured-btn" onclick="goTo('sdk')">start free trial</button>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-desc">On-prem, SLA, SSO, federated intel.</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Everything in Pro</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Federated FAISS index</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>On-prem deploy + SSO</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>99.9% SLA + BAA signing</div>
+        <div class="plan-feature"><svg class="check" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#E1F5EE"/><path d="M4 7l2 2 4-4" stroke="#0F6E56" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Threat intel discount</div>
+        <button class="plan-btn" onclick="goTo('sdk')">contact sales</button>
+      </div>
+    </div>
+
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;text-align:center">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">not sure which plan?</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">OSS Core is free forever. Pro has a 14-day trial, no card needed.</div>
+      <button class="btn-primary" style="font-size:13px;padding:7px 16px" onclick="goTo('sdk')">try it free first</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-sdk" class="screen">
+  <div class="section-pad">
+    <div style="font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">quickstart</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:20px">from zero to protected in under 2 minutes</div>
+
+    <div class="sdk-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">install the SDK</div>
+        <div class="step-desc">Works with any Python 3.9+ environment.</div>
+        <div class="code-block">
+          <span class="c-green">pip install</span> <span class="c-white">sentinel-sdk</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdk-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">wrap your existing client</div>
+        <div class="step-desc">No refactoring. Works with OpenAI, Anthropic, or any LiteLLM-compatible client.</div>
+        <div class="code-block">
+          <div><span class="c-purple">import</span> <span class="c-white">openai, sentinel</span></div>
+          <div style="margin-top:6px"><span class="c-gray"># your existing setup</span></div>
+          <div><span class="c-white">client</span> <span class="c-gray">=</span> <span class="c-white">openai.OpenAI(api_key</span><span class="c-gray">=</span><span class="c-yellow">"sk-..."</span><span class="c-white">)</span></div>
+          <div style="margin-top:6px"><span class="c-gray"># one line to protect it</span></div>
+          <div><span class="c-white">safe</span> <span class="c-gray">=</span> <span class="c-green">sentinel.wrap</span><span class="c-white">(</span></div>
+          <div><span class="c-white">  client,</span></div>
+          <div><span class="c-white">  policy</span><span class="c-gray">=</span><span class="c-yellow">"healthcare"</span><span class="c-white">,</span></div>
+          <div><span class="c-white">  api_key</span><span class="c-gray">=</span><span class="c-yellow">"sntnl-..."</span></div>
+          <div><span class="c-white">)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdk-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">make calls — sentinel intercepts automatically</div>
+        <div class="step-desc">Identical API surface. Every call is screened in parallel.</div>
+        <div class="code-block">
+          <div><span class="c-white">response</span> <span class="c-gray">=</span> <span class="c-white">safe.chat.completions.create(</span></div>
+          <div><span class="c-white">  model</span><span class="c-gray">=</span><span class="c-yellow">"gpt-4o"</span><span class="c-white">,</span></div>
+          <div><span class="c-white">  messages</span><span class="c-gray">=</span><span class="c-white">[{</span></div>
+          <div><span class="c-yellow">    "role"</span><span class="c-white">:</span> <span class="c-yellow">"user"</span><span class="c-white">,</span></div>
+          <div><span class="c-yellow">    "content"</span><span class="c-white">: user_input</span></div>
+          <div><span class="c-white">  }]</span></div>
+          <div><span class="c-white">)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdk-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">inspect what sentinel caught</div>
+        <div class="step-desc">Every response includes a <code style="font-size:11px;background:var(--color-background-secondary);padding:1px 5px;border-radius:3px">sentinel_meta</code> field.</div>
+        <div class="output-card">
+          <div><span class="out-meta">sentinel_meta:</span></div>
+          <div><span class="out-meta">  decision:</span> <span class="out-pass">PASS</span></div>
+          <div><span class="out-meta">  latency_ms:</span> <span class="out-pass">61</span></div>
+          <div><span class="out-meta">  agents_run:</span> <span class="c-white" style="color:var(--color-text-secondary)">7</span></div>
+          <div><span class="out-meta">  pii_detected:</span> <span class="out-pass">false</span></div>
+          <div><span class="out-meta">  hallucination_score:</span> <span class="out-pass">0.96</span></div>
+          <div><span class="out-meta">  injection_risk:</span> <span class="out-pass">0.02</span></div>
+          <div><span class="out-meta">  compliance:</span> <span class="out-pass">HIPAA_CLEAN</span></div>
+        </div>
+
+        <div style="margin-top:10px;font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">what a blocked request looks like:</div>
+        <div class="output-card">
+          <div><span class="out-meta">sentinel_meta:</span></div>
+          <div><span class="out-meta">  decision:</span> <span class="out-block">BLOCKED</span></div>
+          <div><span class="out-meta">  reason:</span> <span class="out-block">prompt_injection</span></div>
+          <div><span class="out-meta">  confidence:</span> <span class="out-block">0.98</span></div>
+          <div><span class="out-meta">  pii_detected:</span> <span class="out-warn">true</span></div>
+          <div><span class="out-meta">  pii_types:</span> <span class="out-warn">["SSN","DOB"]</span></div>
+          <div><span class="out-meta">  audit_id:</span> <span class="c-white" style="color:var(--color-text-secondary)">sntnl_7f3a...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="width:100%" onclick="goTo('dashboard')">see live dashboard</button>
+  </div>
+</div>
+
+<div id="screen-dashboard" class="screen">
+  <div class="section-pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:15px;font-weight:500;color:var(--color-text-primary)">sentinel dashboard</div>
+        <div style="font-size:12px;color:var(--color-text-tertiary)">healthcare-bot · last 24h</div>
+      </div>
+      <div style="background:#E1F5EE;color:#0F6E56;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px">live</div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="stat-box">
+        <div class="stat-val">12,847</div>
+        <div class="stat-lbl">requests screened</div>
+        <div class="stat-delta">+18% vs yesterday</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">34</div>
+        <div class="stat-lbl">threats blocked</div>
+        <div class="stat-delta" style="color:var(--color-text-danger)">3 high severity</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">58ms</div>
+        <div class="stat-lbl">avg latency</div>
+        <div class="stat-delta">within SLA</div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px">compliance posture</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+        <div><div style="font-size:16px;font-weight:500;color:#1D9E75">100%</div><div style="font-size:11px;color:var(--color-text-tertiary)">HIPAA clean</div></div>
+        <div><div style="font-size:16px;font-weight:500;color:#1D9E75">0</div><div style="font-size:11px;color:var(--color-text-tertiary)">GDPR flags</div></div>
+        <div><div style="font-size:16px;font-weight:500;color:#1D9E75">14</div><div style="font-size:11px;color:var(--color-text-tertiary)">audit exports</div></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">recent events</div>
+    <div>
+      <div class="log-row" style="padding:4px 0 8px">
+        <span class="log-head">time</span><span class="log-head">event</span><span class="log-head">agent</span><span class="log-head">status</span>
+      </div>
+      <div class="log-row">
+        <span style="color:var(--color-text-tertiary)">14:32:01</span>
+        <span style="color:var(--color-text-secondary)">User query screened</span>
+        <span style="color:var(--color-text-tertiary)">all 7</span>
+        <span class="badge-pass">pass</span>
+      </div>
+      <div class="log-row">
+        <span style="color:var(--color-text-tertiary)">14:31:44</span>
+        <span style="color:var(--color-text-secondary)">Injection attempt detected</span>
+        <span style="color:var(--color-text-tertiary)">Scout</span>
+        <span class="badge-block">blocked</span>
+      </div>
+      <div class="log-row">
+        <span style="color:var(--color-text-tertiary)">14:31:12</span>
+        <span style="color:var(--color-text-secondary)">SSN found in prompt</span>
+        <span style="color:var(--color-text-tertiary)">PII</span>
+        <span class="badge-warn">redacted</span>
+      </div>
+      <div class="log-row">
+        <span style="color:var(--color-text-tertiary)">14:30:58</span>
+        <span style="color:var(--color-text-secondary)">Hallucination score 0.61</span>
+        <span style="color:var(--color-text-tertiary)">Probe</span>
+        <span class="badge-warn">flagged</span>
+      </div>
+      <div class="log-row">
+        <span style="color:var(--color-text-tertiary)">14:30:33</span>
+        <span style="color:var(--color-text-secondary)">Audit export generated</span>
+        <span style="color:var(--color-text-tertiary)">Compliance</span>
+        <span class="badge-pass">signed</span>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;text-align:center">
+      <button class="btn-secondary" style="font-size:13px" onclick="goTo('landing')">back to home</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-landing" onclick="goTo('landing')">
+    <span class="bnav-icon">⌂</span>home
+  </button>
+  <button class="bnav-btn" id="bnav-pricing" onclick="goTo('pricing')">
+    <span class="bnav-icon">◈</span>pricing
+  </button>
+  <button class="bnav-btn" id="bnav-sdk" onclick="goTo('sdk')">
+    <span class="bnav-icon">{ }</span>docs
+  </button>
+  <button class="bnav-btn" id="bnav-dashboard" onclick="goTo('dashboard')">
+    <span class="bnav-icon">◉</span>dashboard
+  </button>
+</div>
+
+</div>
+</div>
+
+<script>
+function goTo(page){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+page).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  var btn=document.getElementById('bnav-'+page);
+  if(btn) btn.classList.add('active');
+}
+var annual=false;
+function toggleBilling(){
+  annual=!annual;
+  var t=document.getElementById('billing-toggle');
+  t.classList.toggle('on',annual);
+  document.getElementById('save-badge').style.display=annual?'inline':'none';
+  document.getElementById('pro-price').innerHTML=annual?'<span style="font-size:14px;color:var(--color-text-tertiary);text-decoration:line-through">$299</span> $239<span>/mo</span>':'$299<span>/mo</span>';
+}
+</script>

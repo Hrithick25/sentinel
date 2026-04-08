@@ -1,0 +1,34 @@
+{
+  "name": "SENTINEL Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "pip install -r requirements.txt && python -m spacy download en_core_web_trf && cd dashboard && npm install",
+  "forwardPorts": [8000, 5432, 6379, 5173],
+  "portsAttributes": {
+    "8000": { "label": "FastAPI Gateway" },
+    "5432": { "label": "PostgreSQL" },
+    "6379": { "label": "Redis" },
+    "5173": { "label": "React Dashboard" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true,
+        "[python]": { "editor.defaultFormatter": "ms-python.black-formatter" }
+      }
+    }
+  }
+}

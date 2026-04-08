@@ -590,7 +590,13 @@ img, svg { display: block; }
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .nav-menu-toggle { display: inline-flex; }
-  .nav-actions .btn-ghost { display: none; }
+  /* Only hide the Sign In text button, NOT the hamburger (which is also btn-ghost) */
+  .nav-actions > a.btn-ghost { display: none; }
+  /* Hide Get Started button on mobile  */
+  .nav-actions > a.btn-primary { display: none; }
+  /* Compact user pill on mobile */
+  .user-pill span { display: none; }
+  .user-pill svg { display: none; }
 
   .footer-container {
     grid-template-columns: 1fr 1fr;
