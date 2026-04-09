@@ -98,8 +98,8 @@ function Navbar() {
           {user ? (
             <div className="user-pill" onClick={() => setDropOpen(!dropOpen)} ref={dropRef}>
               <div className="user-avatar">{initials}</div>
-              <span>{user.displayName || user.email?.split('@')[0]}</span>
-              <ChevronDown size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+              <span className="user-pill-name">{user.displayName || user.email?.split('@')[0]}</span>
+              <ChevronDown size={14} className="user-pill-chevron" />
 
               {dropOpen && (
                 <div className="user-dropdown">
@@ -123,7 +123,7 @@ function Navbar() {
           )}
 
           <button
-            className="btn-ghost nav-menu-toggle"
+            className="nav-menu-toggle"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -135,17 +135,45 @@ function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="nav-mobile-menu">
-          <NavLink to="/"       end onClick={() => setMenuOpen(false)}>Home</NavLink>
-          <NavLink to="/docs"       onClick={() => setMenuOpen(false)}>How It Works</NavLink>
-          <NavLink to="/pricing"    onClick={() => setMenuOpen(false)}>Pricing</NavLink>
+          <NavLink to="/" end
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={() => setMenuOpen(false)}>Home</NavLink>
+          <NavLink to="/docs"
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={() => setMenuOpen(false)}>How It Works</NavLink>
+          <NavLink to="/pricing"
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={() => setMenuOpen(false)}>Pricing</NavLink>
+          {user && (
+            <NavLink to="/app"
+              className={({ isActive }) => isActive ? 'active' : ''}
+              onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
+          )}
+
+          <div className="mobile-nav-divider" />
+
           {user ? (
-            <NavLink to="/app" onClick={() => setMenuOpen(false)} style={{ color: 'var(--text)', fontWeight: 600 }}>
-              Dashboard
-            </NavLink>
+            <div className="mobile-nav-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => { navigate('/app'); setMenuOpen(false); }}
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <LayoutDashboard size={16} /> Go to Dashboard
+              </button>
+              <button
+                className="btn-secondary dash-signout"
+                onClick={() => { handleSignOut(); setMenuOpen(false); }}
+                style={{ width: '100%', justifyContent: 'center', border: '1px solid rgba(239,68,68,0.25)', color: '#f87171' }}
+              >
+                <LogOut size={16} /> Sign Out
+              </button>
+            </div>
           ) : (
-            <NavLink to="/signin" onClick={() => setMenuOpen(false)} className="mobile-signin-link">
-              Sign In
-            </NavLink>
+            <div className="mobile-nav-actions">
+              <NavLink to="/signin" className="btn-secondary" onClick={() => setMenuOpen(false)}>Sign In</NavLink>
+              <NavLink to="/pricing" className="btn-primary" onClick={() => setMenuOpen(false)}>Get Started →</NavLink>
+            </div>
           )}
         </div>
       )}

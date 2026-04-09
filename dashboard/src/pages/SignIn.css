@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════
-   SIGN IN PAGE
+   SIGN IN PAGE — Enterprise v4
 ═══════════════════════════════════════ */
 .signin-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: clamp(80px, 12vh, 120px) 16px 40px;
   position: relative;
   overflow: hidden;
 }
@@ -20,11 +20,11 @@
 
 .signin-glow1 {
   position: absolute;
-  top: -200px;
-  left: -200px;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+  top: -220px;
+  left: -180px;
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
   border-radius: 50%;
   animation: floatA 12s ease-in-out infinite alternate;
 }
@@ -33,9 +33,9 @@
   position: absolute;
   bottom: -200px;
   right: -150px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, transparent 70%);
   border-radius: 50%;
   animation: floatB 10s ease-in-out infinite alternate;
 }
@@ -44,8 +44,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -65,15 +65,16 @@
   z-index: 1;
   width: 100%;
   max-width: 420px;
-  background: rgba(15, 15, 35, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 20px;
-  padding: 40px 36px;
-  backdrop-filter: blur(24px);
+  background: rgba(10, 6, 28, 0.88);
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  border-radius: 22px;
+  padding: clamp(28px, 5vw, 40px) clamp(20px, 5vw, 36px);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.05) inset,
-    0 32px 64px rgba(0,0,0,0.5),
-    0 0 80px rgba(99,102,241,0.08);
+    0 0 0 1px rgba(167,139,250,0.06) inset,
+    0 32px 72px rgba(0,0,0,0.55),
+    0 0 100px rgba(124,58,237,0.1);
 }
 
 /* Logo row */
@@ -87,25 +88,27 @@
 
 .signin-brand {
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  color: #e2e8f0;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
 }
 
 /* Headings */
 .signin-title {
-  font-size: 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text);
   margin: 0 0 6px;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .signin-sub {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
   margin: 0 0 24px;
+  line-height: 1.5;
 }
 
 /* Google button */
@@ -116,10 +119,10 @@
   gap: 10px;
   width: 100%;
   padding: 11px 20px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.11);
   border-radius: 10px;
-  color: #e2e8f0;
+  color: var(--text-2);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -128,8 +131,8 @@
 }
 
 .btn-google:hover:not(:disabled) {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.18);
   transform: translateY(-1px);
 }
 
@@ -149,7 +152,7 @@
 .signin-divider span {
   flex: 1;
   height: 1px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(124,58,237,0.15);
 }
 
 .signin-divider p {
@@ -177,8 +180,8 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.82rem;
-  font-weight: 500;
-  color: #94a3b8;
+  font-weight: 600;
+  color: var(--text-2);
 }
 
 .forgot-link {
@@ -192,30 +195,27 @@
   transition: color 0.2s;
 }
 
-.forgot-link:hover {
-  color: #a5b4fc;
-}
+.forgot-link:hover { color: #c4b5fd; }
 
 .form-group input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(124,58,237,0.05);
+  border: 1px solid rgba(124,58,237,0.15);
   border-radius: 10px;
   padding: 10px 14px;
-  color: #f1f5f9;
+  color: var(--text);
   font-size: 0.9rem;
   font-family: inherit;
   transition: all 0.2s ease;
   outline: none;
+  width: 100%;
 }
 
-.form-group input::placeholder {
-  color: rgba(148,163,184,0.4);
-}
+.form-group input::placeholder { color: rgba(148,163,184,0.35); }
 
 .form-group input:focus {
-  border-color: rgba(99,102,241,0.5);
-  background: rgba(99,102,241,0.05);
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  border-color: rgba(124,58,237,0.55);
+  background: rgba(124,58,237,0.08);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
 }
 
 /* Error */
@@ -224,11 +224,12 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.25);
+  background: rgba(239,68,68,0.09);
+  border: 1px solid rgba(239,68,68,0.22);
   border-radius: 8px;
   color: #fca5a5;
   font-size: 0.84rem;
+  line-height: 1.4;
 }
 
 /* Submit */
@@ -238,6 +239,7 @@
   font-size: 0.95rem;
   border-radius: 10px;
   justify-content: center;
+  width: 100%;
 }
 
 /* Switch */
@@ -259,32 +261,31 @@
   padding: 0;
   transition: color 0.2s;
 }
-
-.switch-link:hover {
-  color: #a5b4fc;
-}
+.switch-link:hover { color: #c4b5fd; }
 
 /* Terms */
 .signin-terms {
   text-align: center;
   font-size: 0.74rem;
-  color: rgba(148,163,184,0.5);
+  color: rgba(148,163,184,0.45);
   margin: 12px 0 0;
 }
 
 .signin-terms a {
-  color: rgba(148,163,184,0.7);
+  color: rgba(148,163,184,0.65);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.signin-terms a:hover {
-  color: var(--accent-bright);
-}
+.signin-terms a:hover { color: var(--accent-bright); }
 
 /* Responsive */
 @media (max-width: 480px) {
-  .signin-card {
-    padding: 28px 20px;
-  }
+  .signin-page { padding-top: 20px; align-items: flex-start; }
+  .signin-card { max-width: 100%; border-radius: 18px; }
+}
+
+@media (max-width: 360px) {
+  .signin-card { padding: 24px 16px; }
+  .signin-title { font-size: 1.4rem; }
 }

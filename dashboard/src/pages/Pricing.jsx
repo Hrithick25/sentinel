@@ -10,11 +10,11 @@ const PLANS_MONTHLY = [
     id: 'free',
     name: 'Free',
     tagline: 'For developers and tinkerers',
-    price: '₹0',
+    price: '$0',
     sub: 'forever · self-hosted',
     color: '#10b981',
     cta: 'Download SDK',
-    ctaHref: 'https://github.com',
+    ctaHref: 'https://github.com/Hrithick25/sentinel',
     ctaStyle: 'secondary',
     features: [
       { text: 'Core threat protection (injection, jailbreak, PII)', yes: true },
@@ -31,9 +31,9 @@ const PLANS_MONTHLY = [
     id: 'pro',
     name: 'Pro',
     tagline: 'For teams shipping to production',
-    price: '₹4,500',
+    price: '$49',
     sub: '/month · billed monthly',
-    color: '#6366f1',
+    color: '#7c3aed',
     cta: 'Upgrade to Pro',
     ctaHref: '/signin',
     ctaStyle: 'primary',
@@ -45,9 +45,9 @@ const PLANS_MONTHLY = [
       { text: 'All threat protection agents', yes: true },
       { text: 'Real-time analytics dashboard', yes: true },
       { text: 'Multi-language support (50+ languages)', yes: true },
-      { text: 'GDPR + DPDP 2023 compliance logs', yes: true },
+      { text: 'GDPR + SOC 2 compliance logs', yes: true },
       { text: '30-day audit log retention', yes: true },
-      { text: 'Email support', yes: true },
+      { text: 'Priority email support', yes: true },
     ],
     limit: 'Up to 100,000 requests / month included',
   },
@@ -78,8 +78,8 @@ const PLANS_ANNUAL = PLANS_MONTHLY.map(p => {
   if (p.id === 'pro') {
     return {
       ...p,
-      price: '₹43,200',
-      sub: '/yr · billed annually (saves ₹10,800)',
+      price: '$470',
+      sub: '/yr · billed annually (saves $118)',
       badge: 'BEST VALUE',
     }
   }
@@ -97,16 +97,16 @@ const FAQ = [
     a: 'Yes — every new account gets a 14-day free trial of Pro. No credit card required. You can cancel anytime.',
   },
   {
-    q: 'Why is Pro ₹4,500/month?',
-    a: 'We priced it to be fair. Building and maintaining an in-house low-latency security layer costs thousands of dollars a month. Sentinel provides enterprise-grade AI protection at a fraction of that cost.',
+    q: 'Why is Pro $49/month?',
+    a: 'We priced it to be accessible. Building and maintaining an in-house low-latency AI security layer costs thousands of dollars a month. Sentinel delivers enterprise-grade protection at a fraction of that cost.',
   },
   {
     q: 'What happens if I exceed 100,000 requests?',
-    a: 'You\'ll receive a notification. Extra usage is charged at ₹0.02 per request (₹20 per 1,000). No service interruption.',
+    a: "You'll receive a notification. Extra usage is charged at $0.0002 per request ($0.20 per 1,000). No service interruption.",
   },
   {
-    q: 'Does Sentinel work with Indian languages?',
-    a: 'Yes. Hindi, Tamil, Telugu, Bengali, Kannada, Malayalam, Marathi and 45+ more languages are supported. Threats and PII are detected across all of them.',
+    q: 'Does Sentinel work with non-English languages?',
+    a: 'Yes. Sentinel detects threats and PII across 50+ languages including Spanish, French, German, Portuguese, Hindi, Arabic, Chinese, Japanese, and more.',
   },
   {
     q: 'Is there a self-hosted option for Pro?',

@@ -1270,7 +1270,7 @@ export default function Docs() {
         <a href="https://pypi.org/project/sentinel-guardrails-sdk/" className="toc-link-ext" target="_blank" rel="noopener noreferrer">
           <Package size={13} /> PyPI Package
         </a>
-        <a href="https://github.com/Hrithick25/sentinel" className="toc-link-ext" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/Hrithick25/sentinel?tab=contributing-ov-file" className="toc-link-ext" target="_blank" rel="noopener noreferrer">
           <GitBranch size={13} /> GitHub Repo
         </a>
         <button className="toc-link-ext" onClick={() => setActive('api-reference')}>

@@ -1,12 +1,12 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  SENTINEL — Git Ignore Configuration
+#  SENTINEL — .gitignore
+#  Open-source release: excludes personal configs, generated files, secrets
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# ── Environment Variables ──────────────────────────────────────────────────────
+# ── Secrets / Environment ────────────────────────────────────────────────────
 .env
 .env.*
 !.env.example
-!.env.test
 
 # ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
@@ -36,16 +36,17 @@ htmlcov/
 .nox/
 .tox/
 
-# ── Node.js / React (Dashboard) ────────────────────────────────────────────────
+# ── Node.js / React (Dashboard) ──────────────────────────────────────────────
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 dashboard/dist/
 dashboard/build/
+dashboard/package-lock.json
 .pnpm-debug.log*
 
-# ── OS Generated Files ─────────────────────────────────────────────────────────
+# ── OS Generated Files ────────────────────────────────────────────────────────
 .DS_Store
 .DS_Store?
 ._*
@@ -68,8 +69,30 @@ Desktop.ini
 .project
 .settings/
 
-# ── Sentinel Specific ──────────────────────────────────────────────────────────
+# ── Sentinel Data / Logs ─────────────────────────────────────────────────────
 data/faiss_index/
 data/cache/
 logs/
 *.log
+
+# ── Personal / Internal Files (not for public repo) ──────────────────────────
+# Architecture diagrams and internal review docs
+sentinel_*.html
+sentinel_*.svg
+sentinel_review.html
+sentinel_project_card.html
+sentinel_full_website_experience.html
+
+# Test files
+test_*.py
+tests/
+tests/red_team/
+
+# Gateway internals (not distributed)
+sentinel/gateway/
+
+# ── Agent skill files (internal tooling) ─────────────────────────────────────
+.agent/
+
+# ── Dev container config ─────────────────────────────────────────────────────
+.devcontainer/
