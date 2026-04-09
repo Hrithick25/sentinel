@@ -14,12 +14,12 @@ export default function SentinelLogo({ size = 32, className = '' }) {
     >
       <defs>
         <linearGradient id="shield-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#06b6d4" />
+          <stop offset="0%" stopColor="#7c3aed" />
+          <stop offset="100%" stopColor="#4f46e5" />
         </linearGradient>
         <linearGradient id="s-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="#c7d2fe" stopOpacity="0.9" />
+          <stop offset="0%" stopColor="#f5f3ff" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.9" />
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="1.5" result="blur" />
