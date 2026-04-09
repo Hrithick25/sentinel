@@ -111,22 +111,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # ── React Dashboard ────────────────────────────────────────────────────────
-  dashboard:
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-    container_name: sentinel_dashboard
-    profiles: ["full"]   # Only starts with: docker compose --profile full up
-    ports:
-      - "3000:80"
-    environment:
-      VITE_GATEWAY_URL: http://localhost:8000
-      VITE_WS_URL: ws://localhost:8000
-    depends_on:
-      - gateway
-    restart: unless-stopped
-
 volumes:
   pg_data:
   redis_data:
