@@ -31,7 +31,7 @@ const PLANS_MONTHLY = [
     id: 'pro',
     name: 'Pro',
     tagline: 'For teams shipping to production',
-    price: '$49',
+    price: '$25',
     sub: '/month · billed monthly',
     color: '#7c3aed',
     cta: 'Upgrade to Pro',
@@ -78,8 +78,8 @@ const PLANS_ANNUAL = PLANS_MONTHLY.map(p => {
   if (p.id === 'pro') {
     return {
       ...p,
-      price: '$470',
-      sub: '/yr · billed annually (saves $118)',
+      price: '$240',
+      sub: '/yr · billed annually (saves $60)',
       badge: 'BEST VALUE',
     }
   }
@@ -97,7 +97,7 @@ const FAQ = [
     a: 'Yes — every new account gets a 14-day free trial of Pro. No credit card required. You can cancel anytime.',
   },
   {
-    q: 'Why is Pro $49/month?',
+    q: 'Why is Pro $25/month?',
     a: 'We priced it to be accessible. Building and maintaining an in-house low-latency AI security layer costs thousands of dollars a month. Sentinel delivers enterprise-grade protection at a fraction of that cost.',
   },
   {
