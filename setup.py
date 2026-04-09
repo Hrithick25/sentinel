@@ -15,7 +15,7 @@ if readme.exists():
 
 setup(
     name="sentinel-guardrails-sdk",
-    version="4.0.0",
+    version="4.0.1",
     description="SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh.",
     long_description=long_description,
     long_description_content_type="text/markdown",

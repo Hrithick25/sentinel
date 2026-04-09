@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentinel-guardrails-sdk"
-version = "4.0.0"
+version = "4.0.1"
 description = "SENTINEL — Drop-in LLM Trust & Safety SDK. 19-agent parallel mesh: prompt injection, PII, jailbreak pattern detection, DAN attacks, cost anomaly detection, agentic loop breaking, hallucination, and compliance routing."
 readme = "README.md"
 license = {text = "MIT"}

@@ -1,6 +1,6 @@
 """
-SENTINEL Agents Package
-========================
+SENTINEL Agents Package — v5 Enterprise
+==========================================
 Exports build_agent_mesh() which wires up all 19 agents and the FAISSManager.
 
 v1 agents (7):  InjectionScout, PIISentinel, JailbreakGuard,
@@ -16,14 +16,14 @@ v4 agents (4):  JailbreakPatternDetector, CostAnomalyDetector,
                 AgenticLoopBreaker
               + LocaleComplianceRouter (replaces MultilingualGuard - reframed)
 
-Naming rationale (v4):
-  - MultilingualGuard → LocaleComplianceRouter
-      Real value is locale-aware compliance routing, not language detection.
-  - BayesianConsensus → RiskAggregator (consensus layer, not an agent)
-      "If 3 of 5 agents flag this, block it" is saleable. Bayesian framing is not.
-  - JailbreakGuard: kept, but JailbreakPatternDetector added as separate agent
-      JailbreakGuard = score-based heuristics
-      JailbreakPatternDetector = DAN attacks, roleplay, character bypass patterns
+v5 enterprise upgrades (applied to 5 critical agents):
+  - ResponseSafetyLayer: universal model output validation (OpenAI/Claude/Gemini)
+  - ToolCallSafety: universal tool-call extraction + SSRF/path-traversal detection
+  - JailbreakPatternDetector: 65+ signatures, model-specific attacks, crescendo
+  - IntentClassifier: tool-misuse/agentic-loop/prompt-leakage intent labels
+  - HallucinationProbe: tool-call grounding + JSON output validation
+
+All v5 agents share: Redis cache · Kafka events · Prometheus metrics · graceful degradation
 """
 from __future__ import annotations
 
