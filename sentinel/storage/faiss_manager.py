@@ -17,11 +17,18 @@ from pathlib import Path
 from typing import Tuple
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from sentinel.config import settings
 
 logger = logging.getLogger("sentinel.faiss")
+
+# ── Optional heavy imports ────────────────────────────────────────────────────
+try:
+    from sentence_transformers import SentenceTransformer
+    EMBEDDINGS_AVAILABLE = True
+except ImportError:
+    logger.warning("sentence-transformers not installed — FAISS will use keyword fallback")
+    EMBEDDINGS_AVAILABLE = False
 
 try:
     import faiss
@@ -35,18 +42,27 @@ class FAISSManager:
     """
     Thread-safe FAISS index manager.
     The index lives in memory; snapshots are persisted to disk on upsert.
+    Falls back to a no-op stub when sentence-transformers or FAISS are unavailable.
     """
 
     def __init__(self):
-        self._model = SentenceTransformer(settings.embedding_model)
+        self._model = None
         self._dim = settings.faiss_dim
         self._index_path = Path(settings.faiss_index_path)
         self._index_path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = asyncio.Lock()
-        self._index = self._load_or_create()
-        self._attack_count = self._index.ntotal if FAISS_AVAILABLE else 0
-        logger.info("FAISS index ready | vectors=%d | dim=%d",
-                    self._attack_count, self._dim)
+
+        if EMBEDDINGS_AVAILABLE:
+            try:
+                self._model = SentenceTransformer(settings.embedding_model)
+            except Exception as exc:
+                logger.warning("SentenceTransformer load failed: %s — using stub", exc)
+
+        self._index = self._load_or_create() if (FAISS_AVAILABLE and self._model) else None
+        self._attack_count = (self._index.ntotal if self._index else 0)
+        logger.info("FAISS index ready | vectors=%d | dim=%d | embeddings=%s",
+                    self._attack_count, self._dim, "active" if self._model else "disabled")
+
 
     # ── Public API ─────────────────────────────────────────────────────────────
 
@@ -55,7 +71,7 @@ class FAISSManager:
         Returns a similarity score in [0, 1].
         1.0 = exact match to known attack vector.
         """
-        if not FAISS_AVAILABLE or self._index.ntotal == 0:
+        if not self._model or not self._index or self._index.ntotal == 0:
             return 0.0
 
         embedding = await asyncio.to_thread(self._embed, text)
@@ -70,6 +86,8 @@ class FAISSManager:
 
     async def upsert_attack(self, text: str) -> None:
         """Embed a confirmed attack prompt and add it to the FAISS index."""
+        if not self._model or not self._index:
+            return
         embedding = await asyncio.to_thread(self._embed, text)
 
         async with self._lock:
@@ -82,6 +100,8 @@ class FAISSManager:
 
     async def bulk_load(self, texts: list[str]) -> None:
         """Load a batch of known attack vectors (e.g., from HuggingFace dataset)."""
+        if not self._model or not self._index:
+            return
         logger.info("Bulk loading %d attack vectors …", len(texts))
         embeddings = await asyncio.to_thread(self._embed_batch, texts)
 

@@ -1,9 +1,10 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#  SENTINEL — Render Cloud Requirements (optimized for 512MB RAM)
+#  SENTINEL — Render Cloud Requirements (optimized for 512MB RAM free tier)
 # ═══════════════════════════════════════════════════════════════════════════════
-#  Excludes PyTorch/transformers/spacy (2GB+). Agents use built-in
-#  keyword heuristics which provide 85%+ detection accuracy.
-#  For full ML models, use Render's Starter plan (2GB RAM).
+#  PyTorch/sentence-transformers/detoxify excluded (2GB+ RAM needed).
+#  All 19 agents run with built-in keyword/regex heuristics — same detection
+#  categories, just using fast deterministic scoring instead of ML models.
+#  For full ML, use Render Starter plan (2GB RAM) with requirements.txt.
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Gateway server
@@ -30,12 +31,3 @@ python-dotenv>=1.0.1
 orjson>=3.10.3
 websockets>=12.0
 prometheus-client>=0.20.0
-
-# FAISS (CPU-only, lightweight ~15MB)
-faiss-cpu>=1.8.0
-
-# Sentence embeddings (for FAISS injection scout)
-sentence-transformers>=2.7.0
-
-# Detoxify (toxicity screening)
-detoxify>=0.5.2

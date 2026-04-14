@@ -1,0 +1,170 @@
+{
+  "name": "sentinel-enterprise-guardrails",
+  "displayName": "Sentinel LLM AI Security",
+  "description": "Real-time LLM prompt security scanning. Screen prompts for injection, PII, jailbreak, toxicity, and hallucination threats directly in VS Code. 19-agent parallel security mesh with <72ms P99 latency.",
+  "version": "1.0.0",
+  "publisher": "HrithickRam",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#0a0a0a",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "llm",
+    "security",
+    "prompt-injection",
+    "ai-safety",
+    "guardrails",
+    "pii",
+    "jailbreak",
+    "toxicity",
+    "hallucination",
+    "trust-score"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hrithick25/sentinel"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sentinel.screenSelection",
+        "title": "SENTINEL: Screen Selected Text",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "sentinel.trustScore",
+        "title": "SENTINEL: Get Trust Score",
+        "icon": "$(verified)"
+      },
+      {
+        "command": "sentinel.screenFile",
+        "title": "SENTINEL: Screen Entire File",
+        "icon": "$(file-symlink-file)"
+      },
+      {
+        "command": "sentinel.showDashboard",
+        "title": "SENTINEL: Open Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "sentinel.healthCheck",
+        "title": "SENTINEL: Gateway Health Check",
+        "icon": "$(heart)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "sentinel.screenSelection",
+          "when": "editorHasSelection",
+          "group": "sentinel@1"
+        },
+        {
+          "command": "sentinel.trustScore",
+          "when": "editorHasSelection",
+          "group": "sentinel@2"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "sentinel.screenFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SENTINEL",
+      "properties": {
+        "sentinel.gatewayUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "SENTINEL Gateway URL (self-hosted or cloud)"
+        },
+        "sentinel.tenantId": {
+          "type": "string",
+          "default": "",
+          "description": "Your SENTINEL tenant ID"
+        },
+        "sentinel.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "SENTINEL API key (Pro tier)"
+        },
+        "sentinel.autoScan": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically scan string literals on save"
+        },
+        "sentinel.showInlineScores": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show trust scores as inline decorations"
+        },
+        "sentinel.blockThreshold": {
+          "type": "number",
+          "default": 0.7,
+          "description": "Score threshold for highlighting as dangerous (0.0 - 1.0)"
+        },
+        "sentinel.warnThreshold": {
+          "type": "number",
+          "default": 0.35,
+          "description": "Score threshold for highlighting as warning (0.0 - 1.0)"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sentinel-explorer",
+          "title": "SENTINEL",
+          "icon": "media/shield.svg"
+        }
+      ]
+    },
+    "views": {
+      "sentinel-explorer": [
+        {
+          "id": "sentinel.status",
+          "name": "Gateway Status"
+        },
+        {
+          "id": "sentinel.scanResults",
+          "name": "Scan Results"
+        },
+        {
+          "id": "sentinel.agents",
+          "name": "Agent Mesh (19)"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "package": "npx -y @vscode/vsce package --no-dependencies",
+    "publish": "npx -y @vscode/vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^3.0.0"
+  },
+  "dependencies": {}
+}
