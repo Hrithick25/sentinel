@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SENTINEL v5.0 — Render Cloud Deployment Config
+#  https://render.com/docs/blueprint-spec
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  - type: web
+    name: sentinel-gateway
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: uvicorn sentinel.gateway.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_BACKEND
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false  # Set manually in Render dashboard
+      - key: SUPABASE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: ""
+      - key: GATEWAY_URL
+        value: "https://sentinel-gateway.onrender.com"
+      - key: CORS_ORIGINS
+        value: '["https://sentinel-ai.dev","https://sentinel-frontend.vercel.app","http://localhost:5173","http://localhost:3000"]'

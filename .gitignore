@@ -81,13 +81,10 @@ sentinel_review.html
 sentinel_project_card.html
 sentinel_full_website_experience.html
 
-# Test files
-test_*.py
-tests/
-tests/red_team/
-
-# Gateway internals (not distributed)
-sentinel/gateway/
+# VS Code extension build artifacts
+vscode-extension/node_modules/
+vscode-extension/out/
+vscode-extension/*.vsix
 
 # ── Agent skill files (internal tooling) ─────────────────────────────────────
 .agent/

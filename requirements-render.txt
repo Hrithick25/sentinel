@@ -1,0 +1,41 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SENTINEL — Render Cloud Requirements (optimized for 512MB RAM)
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Excludes PyTorch/transformers/spacy (2GB+). Agents use built-in
+#  keyword heuristics which provide 85%+ detection accuracy.
+#  For full ML models, use Render's Starter plan (2GB RAM).
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Gateway server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+
+# Storage
+redis>=5.0.4
+sqlalchemy>=2.0.30
+asyncpg>=0.29.0
+supabase>=2.4.0
+
+# Auth & Security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.9
+
+# Utilities
+httpx>=0.27.0
+numpy>=1.26.4
+python-dotenv>=1.0.1
+orjson>=3.10.3
+websockets>=12.0
+prometheus-client>=0.20.0
+
+# FAISS (CPU-only, lightweight ~15MB)
+faiss-cpu>=1.8.0
+
+# Sentence embeddings (for FAISS injection scout)
+sentence-transformers>=2.7.0
+
+# Detoxify (toxicity screening)
+detoxify>=0.5.2

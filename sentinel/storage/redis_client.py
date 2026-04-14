@@ -26,6 +26,60 @@ _memory_hash: Dict[str, Dict[str, str]] = {}
 _memory_ttl: Dict[str, float] = {}
 
 
+# ── In-memory sorted set store (for rate limiter) ──────────────────────────────
+_memory_zset: Dict[str, Dict[str, float]] = {}
+
+
+class _MemoryPipeline:
+    """Minimal pipeline replacement that collects commands and executes them."""
+
+    def __init__(self, redis: "_MemoryRedis"):
+        self._redis = redis
+        self._commands: list = []
+
+    def zremrangebyscore(self, key: str, min_score: float, max_score: float):
+        self._commands.append(("zremrangebyscore", key, min_score, max_score))
+        return self
+
+    def zadd(self, key: str, mapping: Dict[str, float]):
+        self._commands.append(("zadd", key, mapping))
+        return self
+
+    def zcard(self, key: str):
+        self._commands.append(("zcard", key))
+        return self
+
+    def expire(self, key: str, seconds: int):
+        self._commands.append(("expire", key, seconds))
+        return self
+
+    async def execute(self) -> list:
+        results = []
+        for cmd in self._commands:
+            if cmd[0] == "zremrangebyscore":
+                _, key, min_s, max_s = cmd
+                zset = _memory_zset.get(key, {})
+                to_remove = [m for m, s in zset.items() if min_s <= s <= max_s]
+                for m in to_remove:
+                    zset.pop(m, None)
+                results.append(len(to_remove))
+            elif cmd[0] == "zadd":
+                _, key, mapping = cmd
+                if key not in _memory_zset:
+                    _memory_zset[key] = {}
+                _memory_zset[key].update(mapping)
+                results.append(len(mapping))
+            elif cmd[0] == "zcard":
+                _, key = cmd
+                results.append(len(_memory_zset.get(key, {})))
+            elif cmd[0] == "expire":
+                _, key, seconds = cmd
+                _memory_ttl[key] = time.time() + seconds
+                results.append(True)
+        self._commands.clear()
+        return results
+
+
 class _MemoryRedis:
     """Minimal in-memory Redis replacement for zero-infra dev mode."""
 
@@ -66,6 +120,13 @@ class _MemoryRedis:
             _memory_hash[key] = {}
         current = int(_memory_hash[key].get(field, "0"))
         _memory_hash[key][field] = str(current + amount)
+
+    def pipeline(self):
+        return _MemoryPipeline(self)
+
+    async def zcount(self, key: str, min_score: float, max_score: float) -> int:
+        zset = _memory_zset.get(key, {})
+        return sum(1 for s in zset.values() if min_score <= s <= max_score)
 
 
 async def get_redis():
@@ -111,20 +172,22 @@ async def close_redis() -> None:
 # ── Agent weight helpers ───────────────────────────────────────────────────────
 
 WEIGHT_KEY_PREFIX = "sentinel:weights:"
-_AGENT_COUNT = 15   # v3: 7 (v1) + 5 (v2) + 3 (v3)
+_AGENT_COUNT = 19   # v5: 7 (v1) + 5 (v2) + 3 (v3) + 4 (v4)
 DEFAULT_WEIGHT = 1.0 / _AGENT_COUNT  # uniform priors
 
-# All 15 agents in the v3 mesh
+# All 19 agents in the v5 mesh
 _ALL_AGENTS = [
     # v1
     "InjectionScout", "PIISentinel", "JailbreakGuard",
     "ToxicityScreener", "HallucinationProbe", "ContextAnchor",
     "ComplianceTagger",
     # v2
-    "ResponseSafetyLayer", "MultilingualGuard", "ToolCallSafety",
-    "BrandGuard", "TokenAnomalyDetector",
+    "ResponseSafetyLayer", "MultilingualGuard", "LocaleComplianceRouter",
+    "ToolCallSafety", "BrandGuard", "TokenAnomalyDetector",
     # v3
     "PromptLineage", "IntentClassifier", "AdversarialRephrasing",
+    # v4
+    "JailbreakPatternDetector", "CostAnomalyDetector", "AgenticLoopBreaker",
 ]
 
 
@@ -145,7 +208,7 @@ async def get_agent_weights(tenant_id: str) -> dict[str, float]:
         for a in missing:
             weights[a] = DEFAULT_WEIGHT
         await redis.hset(key, mapping={k: str(v) for k, v in weights.items()})
-    return {k: float(v) for k, v in raw.items()}
+    return weights
 
 
 async def update_agent_weight(tenant_id: str, agent_name: str,
