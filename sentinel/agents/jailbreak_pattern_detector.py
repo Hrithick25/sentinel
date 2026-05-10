@@ -42,6 +42,7 @@ from sentinel.agents.v5_infra import (
     emit_threat_event, observe_latency, inc_flag,
     get_cached, set_cached, agent_log,
 )
+from sentinel.eval.normalizer import normalize_for_detection, decode_encoded_payloads
 from sentinel.models import AgentResult, SentinelRequest
 
 logger = logging.getLogger("sentinel.agents.jailbreak_pattern_detector")
@@ -291,11 +292,20 @@ class JailbreakPatternDetector(SentinelAgent):
         )
 
     def _scan_all_patterns(self, text: str, prompt_full: str) -> list[dict]:
-        """Scan text against all pattern groups. Returns list of hits."""
+        """Scan text against all pattern groups. Returns list of hits.
+
+        v6: Also decodes base64/ROT13/hex payloads and normalizes text
+        before pattern matching to catch encoding-based evasion.
+        """
+        # v6: Pre-decode encoded payloads and normalize
+        normalized = normalize_for_detection(text)
+        decoded = decode_encoded_payloads(text) + decode_encoded_payloads(prompt_full)
+        all_texts = [text, prompt_full, normalized] + decoded
+
         hits = []
         for group, patterns in _COMPILED_GROUPS.items():
             for pattern in patterns:
-                if pattern.search(text) or pattern.search(prompt_full):
+                if any(pattern.search(t) for t in all_texts):
                     hits.append({
                         "group": group,
                         "pattern": pattern.pattern,

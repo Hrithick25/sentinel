@@ -1,10 +1,14 @@
 """
-SENTINEL Red-Team Benchmark Suite
-=====================================
-Runs 500 known attack prompts through a mock pipeline and measures:
-  - Bypass rate (attacks that scored ALLOW)
+SENTINEL Red-Team Benchmark Suite v6.0
+=========================================
+Runs attack and benign prompts through the full 19-agent mesh and measures:
   - Detection rate (attacks correctly flagged)
-  - P99 latency per agent
+  - Bypass rate (attacks that scored ALLOW)
+  - False positive rate (benign prompts incorrectly flagged)
+  - P99 latency (overall and per-agent breakdown)
+
+For adversarial mutation recall, see:
+    python tests/red_team/adversarial_recall_benchmark.py
 
 Run with:
     pytest tests/red_team/ -v --tb=short
@@ -15,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import json
 import time
+from collections import defaultdict
 from pathlib import Path
 
 import pytest
@@ -90,6 +95,7 @@ async def _analyze_prompt(prompt: str, agents) -> dict:
         "flagged": max_score >= 0.6,
         "latency_ms": latency,
         "per_agent": {r.agent_name: round(r.score, 3) for r in results},
+        "per_agent_latency": {r.agent_name: round(r.latency_ms, 2) for r in results},
     }
 
 
@@ -98,7 +104,7 @@ async def run_benchmark():
     agents = build_agent_mesh()
 
     print("\n" + "="*60)
-    print("  SENTINEL RED-TEAM BENCHMARK")
+    print("  SENTINEL RED-TEAM BENCHMARK v6.0")
     print("="*60)
 
     # ── Attack prompts ─────────────────────────────────────────────────────
@@ -126,6 +132,18 @@ async def run_benchmark():
     benign_latencies.sort()
     p99_benign = benign_latencies[int(0.99 * len(benign_latencies))]
 
+    # ── Per-agent P99 latency breakdown ───────────────────────────────────
+    agent_latencies: dict[str, list[float]] = defaultdict(list)
+    for r in attack_results + benign_results:
+        for agent_name, lat in r.get("per_agent_latency", {}).items():
+            agent_latencies[agent_name].append(lat)
+
+    agent_p99: dict[str, float] = {}
+    for agent, times in agent_latencies.items():
+        times.sort()
+        if times:
+            agent_p99[agent] = times[int(0.99 * len(times))]
+
     # ── Report ─────────────────────────────────────────────────────────────
     print("\n" + "="*60)
     print("  RESULTS")
@@ -135,6 +153,10 @@ async def run_benchmark():
     print(f"  False Positive Rate: {fp_rate*100:.1f}%")
     print(f"  P99 Latency (attack):{p99_attack:.1f}ms")
     print(f"  P99 Latency (benign):{p99_benign:.1f}ms")
+    print("  " + "─" * 50)
+    print("  Per-Agent P99 Latency:")
+    for agent, p99 in sorted(agent_p99.items(), key=lambda x: -x[1]):
+        print(f"    {agent:30s} {p99:6.1f}ms")
     print("="*60 + "\n")
 
     # Save JSON report
@@ -144,6 +166,7 @@ async def run_benchmark():
         "false_positive_rate": fp_rate,
         "p99_latency_attack_ms": p99_attack,
         "p99_latency_benign_ms": p99_benign,
+        "agent_p99_latency_ms": agent_p99,
         "attack_count": len(ATTACK_PROMPTS),
         "benign_count": len(BENIGN_PROMPTS),
     }

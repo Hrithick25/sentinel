@@ -20,6 +20,8 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
+from sentinel.eval.normalizer import normalize_for_detection
+
 logger = logging.getLogger("sentinel.ml.risk_scorer")
 
 # ── Heuristic keyword scoring (ultra-fast fallback) ───────────────────────────
@@ -60,6 +62,16 @@ def _heuristic_score(text: str) -> float:
             if kw in text_lower:
                 score += w
     return min(score, 1.0)
+
+
+def _heuristic_score_normalized(text: str) -> float:
+    """Score both raw and normalized versions, take max."""
+    raw = _heuristic_score(text)
+    normalized = normalize_for_detection(text)
+    if normalized != text.lower():
+        norm = _heuristic_score(normalized)
+        return max(raw, norm)
+    return raw
 
 
 # ── Model loading ────────────────────────────────────────────────────────────
@@ -121,24 +133,32 @@ class MLRiskScorer:
         classifier = _load_model()
 
         if not classifier:
-            # Fallback to heuristic scoring
-            return _heuristic_score(prompt)
+            # Fallback to heuristic scoring (with normalization)
+            return _heuristic_score_normalized(prompt)
 
         try:
-            result = classifier(prompt[:512])
-            prediction = result[0]
-            label = prediction["label"].upper()
-            confidence = prediction["score"]
-
-            # ProtectAI model labels: INJECTION / SAFE
-            if label == "INJECTION":
-                return round(confidence, 4)
-            else:
-                # SAFE → invert to get risk score
-                return round(1.0 - confidence, 4)
+            # v6: Score both raw and normalized, take max
+            raw_score = self._classify_single(classifier, prompt)
+            normalized = normalize_for_detection(prompt)
+            if normalized != prompt.lower():
+                norm_score = self._classify_single(classifier, normalized)
+                return max(raw_score, norm_score)
+            return raw_score
         except Exception as exc:
             logger.error("ML scoring failed, using heuristic: %s", exc)
-            return _heuristic_score(prompt)
+            return _heuristic_score_normalized(prompt)
+
+    @staticmethod
+    def _classify_single(classifier, text: str) -> float:
+        """Run classifier on a single text and return risk score."""
+        result = classifier(text[:512])
+        prediction = result[0]
+        label = prediction["label"].upper()
+        confidence = prediction["score"]
+        if label == "INJECTION":
+            return round(confidence, 4)
+        else:
+            return round(1.0 - confidence, 4)
 
     async def score_prompt(self, prompt: str) -> float:
         """Run ML scoring in executor to avoid blocking the event loop."""
